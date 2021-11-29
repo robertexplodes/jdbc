@@ -16,7 +16,7 @@ create table Mitarbeiter(
 create table Produkttypen(
                              produkttyp_ID int NOT NULL PRIMARY KEY,
                              produktart varchar(255) NOT NULL,
-                             holzart varchar(255) NOT NULL CONSTRAINT correct_holzart CHECK (holzart in ('Eiche', 'Fichte', 'Kirsche', 'Tanne', 'Birke', 'Zirbe', 'Buche'))
+                             holzart varchar(255) NOT NULL CONSTRAINT correct_holzart CHECK (holzart in ('EICHE', 'FICHTE', 'KIRSCHE', 'TANNE', 'BIRKE', 'ZIRBE', 'BUCHE'))
 );
 
 create table Kunden(

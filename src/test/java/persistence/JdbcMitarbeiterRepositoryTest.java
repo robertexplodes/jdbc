@@ -14,7 +14,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-class JDBCMitarbeiterRepositoryTest {
+class JdbcMitarbeiterRepositoryTest {
 
     private final TestConnectionSupplier connectionSupplier = new TestConnectionSupplier();
     private MitarbeiterRepository mitarbeiterRepository;
@@ -94,6 +94,7 @@ class JDBCMitarbeiterRepositoryTest {
         var mitarbeiter = new Mitarbeiter("mamu", "Max Mustermann", Rolle.ANGESTELLTER, 3000.0);
         mitarbeiterRepository.save(mitarbeiter);
         var result = mitarbeiterRepository.findByPrimaryKey(mitarbeiter.getNamenskuerzel());
-        assertEquals(mitarbeiter, result);
+        var acutal = result.orElseThrow();
+        assertEquals(mitarbeiter, acutal);
     }
 }

@@ -18,4 +18,17 @@ class ProduktTest {
     }
 
 
+    @Test
+    void equals_works() {
+        var produkt1 = new Produkt(1, "EICHE", "Tisch");
+        var produkt2 = new Produkt(1, "BIRKE", "Tisch");
+        assertEquals(produkt1, produkt2);
+    }
+
+    @Test
+    void equals_fails() {
+        var produkt1 = new Produkt(1, "EICHE", "Tisch");
+        var produkt2 = new Produkt(2, "EICHE", "Tisch");
+        assertNotEquals(produkt1, produkt2);
+    }
 }

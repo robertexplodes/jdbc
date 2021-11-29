@@ -25,7 +25,7 @@ public record JdbcMitarbeiterRepository(Connection connection) implements Mitarb
                 SELECT namenskuerzel, name, rolle, monatsgehalt
                 FROM mitarbeiter
                 WHERE name LIKE ?
-                                """;
+                """;
         try (var statement = connection.prepareStatement(sql)) {
             String like = "%" + name + "%";
             statement.setString(1, like);
@@ -78,7 +78,16 @@ public record JdbcMitarbeiterRepository(Connection connection) implements Mitarb
 
     @Override
     public void delete(Mitarbeiter entity) throws SQLException {
-
+        var slq = """
+                DELETE FROM mitarbeiter
+                WHERE namenskuerzel = ?
+                """;
+        try (var statement = connection.prepareStatement(slq)) {
+            statement.setString(1, entity.getNamenskuerzel());
+            int i = statement.executeUpdate();
+            if (i == 0)
+                throw new SQLException("Mitarbeiter konnte nicht gelöscht werden");
+        }
     }
 
     @Override
