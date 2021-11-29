@@ -12,5 +12,7 @@ public interface Repository<P, T> {
 
     void delete(T entity) throws SQLException;
 
-    Optional<T> findByPrimaryKey(P primaryKey) throws SQLException;
+    void update(T entity) throws SQLException;
+
+    Optional<T> findById(P primaryKey) throws SQLException;
 }

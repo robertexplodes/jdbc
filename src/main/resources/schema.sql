@@ -14,13 +14,13 @@ create table Mitarbeiter(
 );
 
 create table Produkttypen(
-                             produkttyp_ID identity NOT NULL,
+                             produkttyp_ID int NOT NULL PRIMARY KEY,
                              produktart varchar(255) NOT NULL,
                              holzart varchar(255) NOT NULL CONSTRAINT correct_holzart CHECK (holzart in ('EICHE', 'FICHTE', 'KIRSCHE', 'TANNE', 'BIRKE', 'ZIRBE', 'BUCHE'))
 );
 
 create table Kunden(
-                       kunden_id identity NOT NULL,
+                       kunden_id int NOT NULL PRIMARY KEY,
                        email varchar(255) NOT NULL,
                        name varchar(255) NOT NULL,
                        CONSTRAINT valid_email CHECK (email LIKE '_%@_%._%')
@@ -28,28 +28,29 @@ create table Kunden(
 
 
 create table Bewertungen (
-                             bewertungsnummer identity NOT NULL,
+                             bewertungsnummer int NOT NULL PRIMARY KEY,
                              titel varchar(255) NOT NULL,
                              bewertungs_text text,
                              sterne int NOT NULL CONSTRAINT correctamount_sterne check(sterne >= 0 AND sterne <=5),
                              kunde int NOT NULL,
-                            CONSTRAINT FK_bewertung_kunde FOREIGN KEY (kunde) REFERENCES Kunden(kunden_id) ON DELETE Cascade
+                             CONSTRAINT FK_bewertung_kunde FOREIGN KEY (kunde) REFERENCES Kunden(kunden_id) ON DELETE Cascade
 );
 
 
 create table Bestellungen (
-                              bestellnummer identity NOT NULL,
+                              bestellnummer int NOT NULL PRIMARY KEY,
                               bestelldatum date NOT NULL,
                               kunde int,
                               CONSTRAINT FK_Bestellung_kunde FOREIGN KEY(kunde) REFERENCES Kunden(kunden_id) ON DELETE SET NULL,
                               mitarbeiter char(4),
-                               CONSTRAINT FK_Bestellung_mitarbeiter FOREIGN KEY(mitarbeiter) REFERENCES Mitarbeiter(namenskuerzel) ON DELETE SET NULL
+                              CONSTRAINT FK_Bestellung_mitarbeiter FOREIGN KEY(mitarbeiter) REFERENCES Mitarbeiter(namenskuerzel) ON DELETE SET NULL
 );
 
 create table BestellungsInhalt (
-                                   bestellnummer identity NOT NULL,
+                                   bestellnummer int NOT NULL,
                                    produkttyp int,
                                    amount int CONSTRAINT correct_amount CHECK(amount > 0),
+                                   CONSTRAINT PK_BestellungsInhalt PRIMARY KEY(bestellnummer, produkttyp),
                                    CONSTRAINT FK_BestellungsInahlt_produkt FOREIGN KEY(produkttyp) REFERENCES Produkttypen(produkttyp_ID),
                                    CONSTRAINT FK_BestellungsInahlt_bestellung FOREIGN KEY(bestellnummer) REFERENCES Bestellungen(bestellnummer)
 );

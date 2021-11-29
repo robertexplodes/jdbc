@@ -91,7 +91,25 @@ public record JdbcMitarbeiterRepository(Connection connection) implements Mitarb
     }
 
     @Override
-    public Optional<Mitarbeiter> findByPrimaryKey(String namenskuerzel) throws SQLException {
+    public void update(Mitarbeiter entity) throws SQLException {
+        var sql = """
+                UPDATE mitarbeiter
+                SET name = ?, rolle = ?, monatsgehalt = ?
+                WHERE namenskuerzel = ?
+                """;
+        try (var statement = connection.prepareStatement(sql)) {
+            statement.setString(1, entity.getName());
+            statement.setString(2, entity.getRolle().name());
+            statement.setDouble(3, entity.getGehalt());
+            statement.setString(4, entity.getNamenskuerzel());
+            int i = statement.executeUpdate();
+            if (i == 0)
+                throw new SQLException("Mitarbeiter konnte nicht aktualisiert werden");
+        }
+    }
+
+    @Override
+    public Optional<Mitarbeiter> findById(String namenskuerzel) throws SQLException {
         var sql = """
                 SELECT namenskuerzel, name, rolle, monatsgehalt
                 FROM mitarbeiter

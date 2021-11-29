@@ -86,15 +86,47 @@ class JdbcMitarbeiterRepositoryTest {
     }
 
     @Test
-    void delete() {
+    void delete() throws SQLException {
+        var mitarbeiter = List.of(
+                new Mitarbeiter("mamu", "Max Mustermann", Rolle.ANGESTELLTER, 3000.0),
+                new Mitarbeiter("geri", "Gerd Riesenhuber", Rolle.LEHRLING, 3500)
+        );
+        var wilLBeDeleted = new Mitarbeiter("mama", "Max Musterfrau", Rolle.ANGESTELLTER, 3000.0);
+        for (var m : mitarbeiter) {
+            mitarbeiterRepository.save(m);
+        }
+        mitarbeiterRepository.save(wilLBeDeleted);
+        mitarbeiterRepository.delete(wilLBeDeleted);
+        var inDatabase = mitarbeiterRepository.findAll();
+        assertEquals(mitarbeiter, inDatabase);
     }
 
     @Test
     void findByPrimaryKey() throws SQLException {
         var mitarbeiter = new Mitarbeiter("mamu", "Max Mustermann", Rolle.ANGESTELLTER, 3000.0);
         mitarbeiterRepository.save(mitarbeiter);
-        var result = mitarbeiterRepository.findByPrimaryKey(mitarbeiter.getNamenskuerzel());
+        var result = mitarbeiterRepository.findById(mitarbeiter.getNamenskuerzel());
         var acutal = result.orElseThrow();
         assertEquals(mitarbeiter, acutal);
+    }
+
+    @Test
+    void update_works() throws SQLException {
+        var mitarbeiter = new Mitarbeiter("mamu", "Max Mustermann", Rolle.ANGESTELLTER, 3000.0);
+        mitarbeiterRepository.save(mitarbeiter);
+        var newMitarbeiter = new Mitarbeiter("mamu", "Max Maxmusterfrau", Rolle.ANGESTELLTER, 3500.0);
+        mitarbeiterRepository.update(newMitarbeiter);
+        var result = mitarbeiterRepository.findAll();
+        assert result.size() == 1;
+        var actual = result.get(0);
+        assertEquals(newMitarbeiter.getName(), actual.getName());
+    }
+
+    @Test
+    void update_throws() throws SQLException {
+        var mitarbeiter = new Mitarbeiter("mamu", "Max Mustermann", Rolle.ANGESTELLTER, 3000.0);
+        mitarbeiterRepository.save(mitarbeiter);
+        var newMitarbeiter = new Mitarbeiter("mama", "Max Maxmusterfrau", Rolle.ANGESTELLTER, 3500.0);
+        assertThrows(SQLException.class, () -> mitarbeiterRepository.update(newMitarbeiter));
     }
 }

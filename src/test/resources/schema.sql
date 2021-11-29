@@ -14,13 +14,13 @@ create table Mitarbeiter(
 );
 
 create table Produkttypen(
-                             produkttyp_ID int NOT NULL PRIMARY KEY,
+                             produkttyp_ID identity NOT NULL,
                              produktart varchar(255) NOT NULL,
                              holzart varchar(255) NOT NULL CONSTRAINT correct_holzart CHECK (holzart in ('EICHE', 'FICHTE', 'KIRSCHE', 'TANNE', 'BIRKE', 'ZIRBE', 'BUCHE'))
 );
 
 create table Kunden(
-                       kunden_id int NOT NULL PRIMARY KEY,
+                       kunden_id identity NOT NULL,
                        email varchar(255) NOT NULL,
                        name varchar(255) NOT NULL,
                        CONSTRAINT valid_email CHECK (email LIKE '_%@_%._%')
@@ -28,7 +28,7 @@ create table Kunden(
 
 
 create table Bewertungen (
-                             bewertungsnummer int NOT NULL PRIMARY KEY,
+                             bewertungsnummer identity NOT NULL,
                              titel varchar(255) NOT NULL,
                              bewertungs_text text,
                              sterne int NOT NULL CONSTRAINT correctamount_sterne check(sterne >= 0 AND sterne <=5),
@@ -38,7 +38,7 @@ create table Bewertungen (
 
 
 create table Bestellungen (
-                              bestellnummer int NOT NULL PRIMARY KEY,
+                              bestellnummer identity NOT NULL,
                               bestelldatum date NOT NULL,
                               kunde int,
                               CONSTRAINT FK_Bestellung_kunde FOREIGN KEY(kunde) REFERENCES Kunden(kunden_id) ON DELETE SET NULL,
@@ -47,10 +47,9 @@ create table Bestellungen (
 );
 
 create table BestellungsInhalt (
-                                   bestellnummer int NOT NULL,
+                                   bestellnummer identity NOT NULL,
                                    produkttyp int,
                                    amount int CONSTRAINT correct_amount CHECK(amount > 0),
-                                   CONSTRAINT PK_BestellungsInhalt PRIMARY KEY(bestellnummer, produkttyp),
                                    CONSTRAINT FK_BestellungsInahlt_produkt FOREIGN KEY(produkttyp) REFERENCES Produkttypen(produkttyp_ID),
                                    CONSTRAINT FK_BestellungsInahlt_bestellung FOREIGN KEY(bestellnummer) REFERENCES Bestellungen(bestellnummer)
 );

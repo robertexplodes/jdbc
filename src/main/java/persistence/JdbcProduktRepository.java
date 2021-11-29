@@ -60,19 +60,15 @@ public record JdbcProduktRepository(Connection connection) implements ProduktRep
     @Override
     public void save(Produkt entity) throws SQLException {
         var sql = """
-                INSERT INTO produkttypen (produkttyp_id, produktart, holzart)
-                VALUES (?, ?, ?)
+                INSERT INTO produkttypen (produktart, holzart)
+                VALUES (?, ?)
                     """;
         try (var statement = connection.prepareStatement(sql)) {
-            statement.setInt(1, entity.getId());
-            statement.setString(2, entity.getProduktart());
-            statement.setString(3, entity.getHolzart().name());
-            try {
-                statement.executeUpdate();
-            } catch (SQLException e) {
-                e.printStackTrace();
+            statement.setString(1, entity.getProduktart());
+            statement.setString(2, entity.getHolzart().name());
+            int i = statement.executeUpdate();
+            if (i == 0)
                 throw new SQLException("Produkt konnte nicht gespeichert werden");
-            }
         }
     }
 
@@ -84,16 +80,31 @@ public record JdbcProduktRepository(Connection connection) implements ProduktRep
                     """;
         try (var statement = connection.prepareStatement(sql)) {
             statement.setInt(1, entity.getId());
-            try {
-                statement.executeUpdate();
-            } catch (SQLException e) {
+            int i = statement.executeUpdate();
+            if (i == 0)
                 throw new SQLException("Produkt konnte nicht gelöscht werden");
-            }
         }
     }
 
     @Override
-    public Optional<Produkt> findByPrimaryKey(Integer primaryKey) throws SQLException {
+    public void update(Produkt entity) throws SQLException {
+        var sql = """
+                UPDATE produkttypen
+                SET produktart = ?, holzart = ?
+                WHERE produkttyp_id = ?
+                    """;
+        try (var statement = connection.prepareStatement(sql)) {
+            statement.setString(1, entity.getProduktart());
+            statement.setString(2, entity.getHolzart().name());
+            statement.setInt(3, entity.getId());
+            int i = statement.executeUpdate();
+            if (i == 0)
+                throw new SQLException("Produkt konnte nicht aktualisiert werden");
+        }
+    }
+
+    @Override
+    public Optional<Produkt> findById(Integer primaryKey) throws SQLException {
         var sql = """
                 SELECT produkttyp_id, produktart, holzart
                 FROM produkttypen
