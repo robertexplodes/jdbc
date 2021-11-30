@@ -58,7 +58,7 @@ public record JdbcMitarbeiterRepository(Connection connection) implements Mitarb
     }
 
     @Override
-    public void save(Mitarbeiter mitarbeiter) throws SQLException {
+    public Mitarbeiter save(Mitarbeiter mitarbeiter) throws SQLException {
         var sql = """
                 INSERT INTO mitarbeiter (namenskuerzel, name, rolle, monatsgehalt)
                 VALUES (?, ?, ?, ?)
@@ -73,6 +73,7 @@ public record JdbcMitarbeiterRepository(Connection connection) implements Mitarb
             } catch (SQLException e) {
                 throw new SQLException("Mitarbeiter konnte nicht gespeichert werden");
             }
+            return mitarbeiter;
         }
     }
 

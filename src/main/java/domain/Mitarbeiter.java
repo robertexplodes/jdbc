@@ -8,8 +8,7 @@ import java.util.Objects;
 
 @AllArgsConstructor
 @Getter
-
-public class Mitarbeiter {
+public class Mitarbeiter implements Persitable {
     public Mitarbeiter(@NonNull String namenskuerzel, @NonNull String name, String rolle, double gehalt) {
         this.namenskuerzel = namenskuerzel;
         this.name = name;

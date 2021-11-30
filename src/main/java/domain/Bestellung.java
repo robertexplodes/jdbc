@@ -1,19 +1,22 @@
 package domain;
 
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.NonNull;
+import lombok.With;
 
 import java.time.LocalDate;
 import java.util.Objects;
-
+@Getter
 @AllArgsConstructor
-public class Bestellung {
+public class Bestellung implements Persitable{
 
+    @With
     private Integer bestellungId;
     @NonNull
     private LocalDate bestellDatum;
-    @NonNull
-    private Kunde kunde;
+
+    private Kunde kunde; // can be null, when client gets deleted
 
     private Mitarbeiter mitarbeiter;
 

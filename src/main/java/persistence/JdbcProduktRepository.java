@@ -6,6 +6,7 @@ import domain.Produkt;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -58,17 +59,20 @@ public record JdbcProduktRepository(Connection connection) implements ProduktRep
     }
 
     @Override
-    public void save(Produkt entity) throws SQLException {
+    public Produkt save(Produkt entity) throws SQLException {
         var sql = """
                 INSERT INTO produkttypen (produktart, holzart)
                 VALUES (?, ?)
                     """;
-        try (var statement = connection.prepareStatement(sql)) {
+        try (var statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             statement.setString(1, entity.getProduktart());
             statement.setString(2, entity.getHolzart().name());
             int i = statement.executeUpdate();
             if (i == 0)
                 throw new SQLException("Produkt konnte nicht gespeichert werden");
+            var keys = statement.getGeneratedKeys();
+            keys.next();
+            return entity.withId(keys.getInt(1));
         }
     }
 

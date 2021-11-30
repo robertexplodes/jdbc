@@ -92,7 +92,7 @@ class JdbcProduktRepositoryTest {
     }
 
     @Test
-    void delete_throws() throws SQLException {
+    void delete_throws() {
         var produkt = new Produkt(1, Holzart.BIRKE, "Tisch");
         assertThrows(SQLException.class, () -> produktRepository.delete(produkt));
     }

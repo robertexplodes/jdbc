@@ -1,14 +1,14 @@
 package domain;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NonNull;
+import javafx.beans.property.SimpleObjectProperty;
+import lombok.*;
 
 import java.util.Objects;
 
 @AllArgsConstructor
 @Getter
-public class Produkt {
+@ToString
+public class Produkt implements Persitable{
 
     public Produkt(Integer id, @NonNull String holzart, @NonNull String produktart) {
         this.id = id;
@@ -16,6 +16,12 @@ public class Produkt {
         this.produktart = produktart;
     }
 
+    public SimpleObjectProperty<String> getHolzartProperty() {
+        var name = holzart.name();
+        name = name.substring(0, 1).toUpperCase() + name.substring(1).toLowerCase();
+        return new SimpleObjectProperty<>(name);
+    }
+    @With
     private Integer id;
     @NonNull
     private Holzart holzart;

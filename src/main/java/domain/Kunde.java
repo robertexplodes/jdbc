@@ -2,11 +2,13 @@ package domain;
 
 import lombok.Getter;
 import lombok.NonNull;
+import lombok.With;
 
 import java.util.Objects;
 
 @Getter
-public class Kunde {
+public class Kunde implements Persitable{
+    @With
     private Integer id;
     @NonNull
     private String name;

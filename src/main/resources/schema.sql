@@ -6,6 +6,8 @@ drop table if exists Kunden;
 drop table if exists Produkttypen;
 drop table if exists Mitarbeiter;
 
+
+
 create table Mitarbeiter(
                             namenskuerzel char(4) NOT NULL PRIMARY KEY,
                             name varchar(255) NOT NULL,
@@ -14,13 +16,13 @@ create table Mitarbeiter(
 );
 
 create table Produkttypen(
-                             produkttyp_ID int NOT NULL PRIMARY KEY,
+                             produkttyp_ID serial NOT NULL PRIMARY KEY,
                              produktart varchar(255) NOT NULL,
                              holzart varchar(255) NOT NULL CONSTRAINT correct_holzart CHECK (holzart in ('EICHE', 'FICHTE', 'KIRSCHE', 'TANNE', 'BIRKE', 'ZIRBE', 'BUCHE'))
 );
 
 create table Kunden(
-                       kunden_id int NOT NULL PRIMARY KEY,
+                       kunden_id serial NOT NULL PRIMARY KEY,
                        email varchar(255) NOT NULL,
                        name varchar(255) NOT NULL,
                        CONSTRAINT valid_email CHECK (email LIKE '_%@_%._%')
@@ -28,7 +30,7 @@ create table Kunden(
 
 
 create table Bewertungen (
-                             bewertungsnummer int NOT NULL PRIMARY KEY,
+                             bewertungsnummer serial NOT NULL PRIMARY KEY,
                              titel varchar(255) NOT NULL,
                              bewertungs_text text,
                              sterne int NOT NULL CONSTRAINT correctamount_sterne check(sterne >= 0 AND sterne <=5),
@@ -38,7 +40,7 @@ create table Bewertungen (
 
 
 create table Bestellungen (
-                              bestellnummer int NOT NULL PRIMARY KEY,
+                              bestellnummer serial NOT NULL PRIMARY KEY,
                               bestelldatum date NOT NULL,
                               kunde int,
                               CONSTRAINT FK_Bestellung_kunde FOREIGN KEY(kunde) REFERENCES Kunden(kunden_id) ON DELETE SET NULL,
