@@ -29,9 +29,11 @@ public class Produkt implements Persitable {
     @NotEditable
     @Render
     private Integer id;
+
     @NonNull
     @Render
     private Holzart holzart;
+
     @NonNull
     @Render
     private String produktart;

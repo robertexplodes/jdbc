@@ -27,8 +27,6 @@ import persistence.*;
 
 import java.awt.*;
 import java.io.IOException;
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -38,7 +36,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.ResourceBundle;
 
-// TODO: rick-roll bei help
+
 public class Controller implements Initializable {
 
     @FXML
@@ -140,7 +138,7 @@ public class Controller implements Initializable {
             var hyperlink = new Hyperlink("More information here!");
             hyperlink.setOnAction(e -> {
                 try {
-                    Desktop.getDesktop().browse(new URL("https://www.pwnfunction.com").toURI());
+                    Desktop.getDesktop().browse(new URL("https://www.youtube.com/watch?v=dQw4w9WgXcQ").toURI());
                 } catch (IOException | URISyntaxException ex) {
                     ex.printStackTrace();
                 }
