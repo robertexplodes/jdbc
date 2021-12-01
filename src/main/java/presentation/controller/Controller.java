@@ -12,6 +12,10 @@ import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.MenuItem;
+import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
@@ -21,9 +25,12 @@ import javafx.stage.Stage;
 import lombok.SneakyThrows;
 import persistence.*;
 
+import java.awt.*;
+import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -63,6 +70,9 @@ public class Controller implements Initializable {
 
     @FXML
     private TableColumn<Produkt, String> produktart;
+
+    @FXML
+    private MenuItem helpAbout;
 
     @FXML
     private TableView<Kunde> kundentable;
@@ -123,6 +133,25 @@ public class Controller implements Initializable {
         mitarbeiterTable.setOnMouseClicked(event -> handleEdit(event, mitarbeiterTable, Mitarbeiter.class));
         produkteTable.setOnMouseClicked(event -> handleEdit(event, produkteTable, Produkt.class));
         kundentable.setOnMouseClicked(event -> handleEdit(event, kundentable, Kunde.class));
+
+        helpAbout.setOnAction(event -> {
+            var pane = new GridPane();
+            pane.setPadding(new Insets(10));
+            var hyperlink = new Hyperlink("More information here!");
+            hyperlink.setOnAction(e -> {
+                try {
+                    Desktop.getDesktop().browse(new URL("https://www.pwnfunction.com").toURI());
+                } catch (IOException | URISyntaxException ex) {
+                    ex.printStackTrace();
+                }
+            });
+            pane.addRow(0, hyperlink);
+            var stage = new Stage();
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.setTitle("About");
+            stage.setScene(new Scene(pane));
+            stage.show();
+        });
     }
 
     private void handleEdit(MouseEvent event, TableView<? extends Persitable> table, Class<? extends Persitable> clazz) {
@@ -211,4 +240,6 @@ public class Controller implements Initializable {
     public void closeDB() {
         connection.close();
     }
+
+
 }

@@ -24,6 +24,7 @@ public class Produkt implements Persitable {
         name = name.substring(0, 1).toUpperCase() + name.substring(1).toLowerCase();
         return new SimpleObjectProperty<>(name);
     }
+
     @With
     @NotEditable
     @Render

@@ -29,4 +29,11 @@ class MitarbeiterTest {
         var m2 = new Mitarbeiter("mama", "Max Mustermann", "MEISTER", 3000);
         assertNotEquals(m1, m2);
     }
+
+    @Test
+    void correct_Rollen_property() {
+        var mitarbeiter = new Mitarbeiter("mamu", "Max Mustermann", "MEISTER", 3000);
+        var rp = mitarbeiter.rollenProperty();
+        assertEquals("Meister", rp.get());
+    }
 }

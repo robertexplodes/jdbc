@@ -31,4 +31,11 @@ class ProduktTest {
         var produkt2 = new Produkt(2, "EICHE", "Tisch");
         assertNotEquals(produkt1, produkt2);
     }
+
+    @Test
+    void has_correct_holzart_property() {
+        var produkt = new Produkt(1, Holzart.EICHE, "Tisch");
+        var hp = produkt.holzartProperty();
+        assertEquals("Eiche", hp.get());
+    }
 }
