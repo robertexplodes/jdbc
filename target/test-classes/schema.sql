@@ -47,9 +47,10 @@ create table Bestellungen (
 );
 
 create table BestellungsInhalt (
-                                   bestellnummer identity NOT NULL,
-                                   produkttyp int,
+                                   bestellnummer int NOT NULL,
+                                   produkttyp int NOT NULL,
                                    amount int CONSTRAINT correct_amount CHECK(amount > 0),
+                                   CONSTRAINT PK_BestellungsInhalt PRIMARY KEY (bestellnummer, produkttyp),
                                    CONSTRAINT FK_BestellungsInahlt_produkt FOREIGN KEY(produkttyp) REFERENCES Produkttypen(produkttyp_ID),
                                    CONSTRAINT FK_BestellungsInahlt_bestellung FOREIGN KEY(bestellnummer) REFERENCES Bestellungen(bestellnummer)
 );

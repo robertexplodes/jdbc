@@ -33,8 +33,9 @@
                   <TableView fx:id="mitarbeiterTable" prefHeight="200.0" prefWidth="200.0">
                     <columns>
                       <TableColumn fx:id="namenskuerzel" prefWidth="102.0" resizable="false" text="Namenskuerzel" />
-                      <TableColumn fx:id="name" prefWidth="312.0" resizable="false" text="Name" />
-                        <TableColumn fx:id="gehalt" minWidth="0.0" prefWidth="99.0" resizable="false" text="Gehalt" />
+                      <TableColumn fx:id="name" prefWidth="346.0" resizable="false" text="Name" />
+                        <TableColumn fx:id="gehalt" minWidth="0.0" prefWidth="131.0" resizable="false" text="Gehalt" />
+                        <TableColumn fx:id="mitarbeiterRolle" prefWidth="195.0" text="Rolle" />
                     </columns>
                   </TableView>
                </content>
@@ -49,6 +50,17 @@
                     </columns>
                   </TableView>
                </content></Tab>
+            <Tab text="Kunde">
+               <content>
+                  <TableView fx:id="kundentable" prefHeight="200.0" prefWidth="200.0">
+                    <columns>
+                      <TableColumn fx:id="kundenId" prefWidth="75.0" resizable="false" text="Id" />
+                      <TableColumn fx:id="kundenName" prefWidth="287.0" resizable="false" text="Name" />
+                        <TableColumn fx:id="kundenEmail" prefWidth="412.0" resizable="false" text="E-Mail" />
+                    </columns>
+                  </TableView>
+               </content>
+            </Tab>
         </tabs>
       </TabPane>
       <MenuBar GridPane.columnSpan="4" GridPane.valignment="TOP">

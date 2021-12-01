@@ -1,5 +1,6 @@
 package presentation.controller;
 
+import domain.Kunde;
 import domain.Mitarbeiter;
 import domain.Persitable;
 import domain.Produkt;
@@ -13,10 +14,7 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import lombok.SneakyThrows;
-import persistence.JdbcMitarbeiterRepository;
-import persistence.JdbcProduktRepository;
-import persistence.MitarbeiterRepository;
-import persistence.ProduktRepository;
+import persistence.*;
 
 import java.net.URL;
 import java.sql.Connection;
@@ -42,6 +40,9 @@ public class Controller implements Initializable {
     private TableColumn<Mitarbeiter, String> gehalt;
 
     @FXML
+    private TableColumn<Mitarbeiter, String> mitarbeiterRolle;
+
+    @FXML
     private TableView<Produkt> produkte;
 
     @FXML
@@ -54,11 +55,24 @@ public class Controller implements Initializable {
     private TableColumn<Produkt, String> produktart;
 
     @FXML
+    private TableView<Kunde> kundentable;
+
+    @FXML
+    private TableColumn<Kunde, Integer> kundenId;
+
+    @FXML
+    private TableColumn<Kunde, String> kundenName;
+
+    @FXML
+    private TableColumn<Kunde, String> kundenEmail;
+
+    @FXML
     private Button add;
 
     private Connection connection;
     private MitarbeiterRepository mitarbeiterRepository;
     private ProduktRepository produktRepository;
+    private KundenRepository kundenRepository;
 
     @SneakyThrows
     @Override
@@ -66,10 +80,12 @@ public class Controller implements Initializable {
         connection = DriverManager.getConnection("jdbc:postgresql://localhost:5432/tischlerunternehmen", "admin", "password");
         mitarbeiterRepository = new JdbcMitarbeiterRepository(connection);
         produktRepository = new JdbcProduktRepository(connection);
+        kundenRepository = new JdbcKundenRepository(connection);
+
         namenskuerzel.setCellValueFactory(new PropertyValueFactory<>("namenskuerzel"));
         name.setCellValueFactory(new PropertyValueFactory<>("name"));
         gehalt.setCellValueFactory(new PropertyValueFactory<>("gehalt"));
-
+        mitarbeiterRolle.setCellValueFactory(r -> r.getValue().rollenProperty());
 
         setMitarbeiterTable(mitarbeiterRepository.findAll());
 
@@ -78,6 +94,12 @@ public class Controller implements Initializable {
         holzart.setCellValueFactory(p -> p.getValue().getHolzartProperty());
 
         setProdukteTable(produktRepository.findAll());
+
+        kundenEmail.setCellValueFactory(new PropertyValueFactory<>("email"));
+        kundenName.setCellValueFactory(new PropertyValueFactory<>("name"));
+        kundenId.setCellValueFactory(new PropertyValueFactory<>("id"));
+
+        setKundenTable(kundenRepository.findAll());
 
         add.setOnAction(event -> {
             var text = tabpane.getSelectionModel().getSelectedItem().getText();
@@ -88,7 +110,13 @@ public class Controller implements Initializable {
             }
         });
     }
-    
+
+    private void setKundenTable(List<Kunde> all) {
+        var produktList = FXCollections.observableArrayList(all);
+
+        this.kundentable.setItems(produktList);
+    }
+
 
     private void setProdukteTable(List<Produkt> produkte) {
         ObservableList<Produkt> produktList = FXCollections.observableArrayList(produkte);

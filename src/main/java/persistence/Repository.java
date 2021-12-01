@@ -10,6 +10,12 @@ public interface Repository<P, T extends Persitable> {
 
     List<T> findAll() throws SQLException;
 
+    /**
+     * Saves the given entity to the database.
+     * @param entity
+     * @return Entity with the new primary key
+     * @throws SQLException
+     */
     T save(T entity) throws SQLException;
 
     void delete(T entity) throws SQLException;

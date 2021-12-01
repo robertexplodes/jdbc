@@ -20,7 +20,8 @@ public class Kunde implements Persitable{
         this.name = name;
         var emailRegex = "^[\\w-\\+]+(\\.[\\w]+)*@[\\w-]+(\\.[\\w]+)*(\\.[a-z]{2,})$";
         if(!email.matches(emailRegex)) {
-            throw new IllegalArgumentException("Email is not valid");
+
+            throw new IllegalArgumentException("Email is not valid " + email);
         }
         this.email = email;
     }

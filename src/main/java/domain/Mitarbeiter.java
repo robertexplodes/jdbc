@@ -1,5 +1,6 @@
 package domain;
 
+import javafx.beans.property.SimpleObjectProperty;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NonNull;
@@ -14,6 +15,12 @@ public class Mitarbeiter implements Persitable {
         this.name = name;
         this.rolle = Rolle.valueOf(rolle);
         this.gehalt = gehalt;
+    }
+
+    public SimpleObjectProperty<String> rollenProperty() {
+        String roleName = rolle.name();
+        roleName = roleName.substring(0, 1).toUpperCase() + roleName.substring(1).toLowerCase();
+        return new SimpleObjectProperty<>(roleName);
     }
 
     @NonNull
