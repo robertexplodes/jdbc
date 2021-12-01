@@ -42,7 +42,7 @@
             </Tab>
           <Tab text="Produkte">
                <content>
-                  <TableView fx:id="produkte" prefHeight="200.0" prefWidth="200.0">
+                  <TableView fx:id="produkteTable" prefHeight="200.0" prefWidth="200.0">
                     <columns>
                       <TableColumn fx:id="produktId" prefWidth="75.0" resizable="false" text="Produkt-ID" />
                       <TableColumn fx:id="holzart" prefWidth="289.0" resizable="false" text="Holzart" />

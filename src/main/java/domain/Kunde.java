@@ -1,5 +1,8 @@
 package domain;
 
+import domain.interfaces.NotEditable;
+import domain.interfaces.Persitable;
+import domain.interfaces.Render;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.With;
@@ -7,12 +10,16 @@ import lombok.With;
 import java.util.Objects;
 
 @Getter
-public class Kunde implements Persitable{
+public class Kunde implements Persitable {
     @With
+    @NotEditable
+    @Render
     private Integer id;
     @NonNull
+    @Render
     private String name;
     @NonNull
+    @Render
     private String email;
 
     public Kunde(Integer id, @NonNull String name, @NonNull String email) {

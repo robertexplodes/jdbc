@@ -1,27 +1,37 @@
 package presentation.controller;
 
-import domain.Kunde;
-import domain.Mitarbeiter;
-import domain.Persitable;
-import domain.Produkt;
+import domain.*;
+import domain.interfaces.NotEditable;
+import domain.interfaces.Persitable;
+import domain.interfaces.Render;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Button;
-import javafx.scene.control.TabPane;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
+import javafx.geometry.Insets;
+import javafx.scene.Node;
+import javafx.scene.Scene;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.GridPane;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 import lombok.SneakyThrows;
 import persistence.*;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.net.URL;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.util.Arrays;
 import java.util.List;
 import java.util.ResourceBundle;
 
+// TODO: rick-roll bei help
 public class Controller implements Initializable {
 
     @FXML
@@ -43,7 +53,7 @@ public class Controller implements Initializable {
     private TableColumn<Mitarbeiter, String> mitarbeiterRolle;
 
     @FXML
-    private TableView<Produkt> produkte;
+    private TableView<Produkt> produkteTable;
 
     @FXML
     private TableColumn<Produkt, Integer> produktId;
@@ -91,7 +101,7 @@ public class Controller implements Initializable {
 
         produktId.setCellValueFactory(new PropertyValueFactory<>("id"));
         produktart.setCellValueFactory(new PropertyValueFactory<>("produktart"));
-        holzart.setCellValueFactory(p -> p.getValue().getHolzartProperty());
+        holzart.setCellValueFactory(p -> p.getValue().holzartProperty());
 
         setProdukteTable(produktRepository.findAll());
 
@@ -109,23 +119,92 @@ public class Controller implements Initializable {
                 System.out.println("mitarbeiter");
             }
         });
+
+        mitarbeiterTable.setOnMouseClicked(event -> handleEdit(event, mitarbeiterTable, Mitarbeiter.class));
+        produkteTable.setOnMouseClicked(event -> handleEdit(event, produkteTable, Produkt.class));
+        kundentable.setOnMouseClicked(event -> handleEdit(event, kundentable, Kunde.class));
+    }
+
+    private void handleEdit(MouseEvent event, TableView<? extends Persitable> table, Class<? extends Persitable> clazz) {
+        if (!event.getButton().equals(MouseButton.PRIMARY) || event.getClickCount() != 2) {
+            return;
+        }
+        var selected = table.getSelectionModel().getSelectedItem();
+        if (selected == null) {
+            return;
+        }
+        openEditWindow(clazz, selected);
     }
 
     private void setKundenTable(List<Kunde> all) {
         var produktList = FXCollections.observableArrayList(all);
-
         this.kundentable.setItems(produktList);
     }
 
-
     private void setProdukteTable(List<Produkt> produkte) {
         ObservableList<Produkt> produktList = FXCollections.observableArrayList(produkte);
-        this.produkte.setItems(produktList);
+        this.produkteTable.setItems(produktList);
     }
 
     private void setMitarbeiterTable(List<Mitarbeiter> mitarbeiterList) {
         var olist = FXCollections.observableList(mitarbeiterList);
         mitarbeiterTable.setItems(olist);
+    }
+
+    @SneakyThrows
+    private void openEditWindow(Class<? extends Persitable> clazz, Persitable persitable) {
+        var fields = Arrays.stream(clazz.getDeclaredFields())
+                .filter(f -> f.isAnnotationPresent(Render.class))
+                .toList();
+
+        var pane = new GridPane();
+        pane.setPadding(new Insets(10, 10, 10, 10));
+        pane.setHgap(10);
+        pane.setVgap(30);
+
+        for (int i = 0; i < fields.size(); i++) {
+            var field = fields.get(i);
+            var methodName = "get" + toFirstLetterUppercase(field.getName());
+
+            var getMethod = clazz.getMethod(methodName);
+            var returnValue = getMethod.invoke(persitable);
+
+            Node type = getNodeForType(getMethod, returnValue);
+            if (field.isAnnotationPresent(NotEditable.class)) {
+                type = new Label(returnValue.toString());
+            }
+            var labelText = toFirstLetterUppercase(field.getName());
+            pane.addRow(i, new Label(labelText), type);
+        }
+        var stage = new Stage();
+        stage.setScene(new Scene(pane));
+        stage.setTitle("Edit " + clazz.getSimpleName());
+        stage.initModality(Modality.WINDOW_MODAL);
+        stage.initOwner(this.tabpane.getScene().getWindow());
+        stage.resizableProperty().setValue(false);
+        stage.show();
+    }
+
+    private String toFirstLetterUppercase(String name) {
+        return name.substring(0, 1).toUpperCase() + name.substring(1);
+    }
+
+    private Node getNodeForType(Method getMethod, Object returnValue) {
+        return switch (getMethod.getReturnType().getSimpleName()) {
+            case "String", "Integer", "Double", "double" -> new TextField(returnValue.toString());
+            case "Rolle", "Holzart" -> {
+                var choiceBox = new ChoiceBox<>();
+                if (returnValue instanceof Rolle r) {
+                    choiceBox.getItems().addAll(Rolle.values());
+                    choiceBox.getSelectionModel().select(r);
+                } else if (returnValue instanceof Holzart h) {
+                    choiceBox.getItems().addAll(Holzart.values());
+                    choiceBox.getSelectionModel().select(h);
+                }
+                yield choiceBox;
+            }
+            default -> throw new IllegalArgumentException("Unsupported type" + getMethod.getReturnType().getSimpleName());
+        };
     }
 
     @SneakyThrows

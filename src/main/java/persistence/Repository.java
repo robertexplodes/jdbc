@@ -1,6 +1,6 @@
 package persistence;
 
-import domain.Persitable;
+import domain.interfaces.Persitable;
 
 import java.sql.SQLException;
 import java.util.List;

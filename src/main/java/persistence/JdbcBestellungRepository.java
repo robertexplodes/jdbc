@@ -8,8 +8,6 @@ import java.sql.*;
 import java.sql.Date;
 import java.util.*;
 
-// TODO
-// - bestellung-produkt-relation regeln, entweder List<Produkt> in Bestellung
 public record JdbcBestellungRepository(Connection connection) implements BestellungRepository {
 
     private Optional<Bestellung> bestellungOfResultSet(ResultSet resultSet) throws SQLException {

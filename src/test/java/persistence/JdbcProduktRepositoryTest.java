@@ -56,7 +56,6 @@ class JdbcProduktRepositoryTest {
         assertEquals(produkte.size(), produktRepository.findAll().size());
     }
 
-    // TODO: findByHolzart
     @Test
     void update_works() throws SQLException {
         var produkt = new Produkt(1, Holzart.BIRKE, "Tisch");

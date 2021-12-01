@@ -1,5 +1,8 @@
 package domain;
 
+import domain.interfaces.NotEditable;
+import domain.interfaces.Persitable;
+import domain.interfaces.Render;
 import javafx.beans.property.SimpleObjectProperty;
 import lombok.*;
 
@@ -8,7 +11,7 @@ import java.util.Objects;
 @AllArgsConstructor
 @Getter
 @ToString
-public class Produkt implements Persitable{
+public class Produkt implements Persitable {
 
     public Produkt(Integer id, @NonNull String holzart, @NonNull String produktart) {
         this.id = id;
@@ -16,16 +19,20 @@ public class Produkt implements Persitable{
         this.produktart = produktart;
     }
 
-    public SimpleObjectProperty<String> getHolzartProperty() {
+    public SimpleObjectProperty<String> holzartProperty() {
         var name = holzart.name();
         name = name.substring(0, 1).toUpperCase() + name.substring(1).toLowerCase();
         return new SimpleObjectProperty<>(name);
     }
     @With
+    @NotEditable
+    @Render
     private Integer id;
     @NonNull
+    @Render
     private Holzart holzart;
     @NonNull
+    @Render
     private String produktart;
 
     @Override

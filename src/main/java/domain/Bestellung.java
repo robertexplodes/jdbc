@@ -1,5 +1,6 @@
 package domain;
 
+import domain.interfaces.Persitable;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NonNull;
@@ -9,7 +10,7 @@ import java.time.LocalDate;
 import java.util.Objects;
 @Getter
 @AllArgsConstructor
-public class Bestellung implements Persitable{
+public class Bestellung implements Persitable {
 
     @With
     private Integer bestellungId;

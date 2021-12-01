@@ -1,13 +1,18 @@
 package domain;
 
+import domain.interfaces.NotEditable;
+import domain.interfaces.Persitable;
+import domain.interfaces.Render;
 import javafx.beans.property.SimpleObjectProperty;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NonNull;
+import lombok.ToString;
 
 import java.util.Objects;
 
 @AllArgsConstructor
+@ToString
 @Getter
 public class Mitarbeiter implements Persitable {
     public Mitarbeiter(@NonNull String namenskuerzel, @NonNull String name, String rolle, double gehalt) {
@@ -24,12 +29,19 @@ public class Mitarbeiter implements Persitable {
     }
 
     @NonNull
+    @NotEditable
+    @Render
     private String namenskuerzel;
+
     @NonNull
+    @Render
     private String name;
+
     @NonNull
+    @Render
     private Rolle rolle;
 
+    @Render
     private double gehalt;
 
     @Override
