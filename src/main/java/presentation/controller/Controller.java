@@ -1,29 +1,27 @@
 package presentation.controller;
 
 import domain.*;
-import domain.interfaces.NotEditable;
 import domain.interfaces.Persitable;
-import domain.interfaces.Render;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
-import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.Button;
-import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
-import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Pane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import lombok.SneakyThrows;
 import persistence.*;
+import presentation.Utils;
 
 import java.awt.*;
 import java.io.IOException;
@@ -32,9 +30,9 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.util.Arrays;
+import java.sql.SQLException;
+import java.util.*;
 import java.util.List;
-import java.util.ResourceBundle;
 
 
 public class Controller implements Initializable {
@@ -42,20 +40,6 @@ public class Controller implements Initializable {
     @FXML
     private TabPane tabpane;
 
-    @FXML
-    private TableView<Mitarbeiter> mitarbeiterTable;
-
-    @FXML
-    private TableColumn<Mitarbeiter, String> namenskuerzel;
-
-    @FXML
-    private TableColumn<Mitarbeiter, String> name;
-
-    @FXML
-    private TableColumn<Mitarbeiter, String> gehalt;
-
-    @FXML
-    private TableColumn<Mitarbeiter, String> mitarbeiterRolle;
 
     @FXML
     private TableView<Produkt> produkteTable;
@@ -73,7 +57,7 @@ public class Controller implements Initializable {
     private MenuItem helpAbout;
 
     @FXML
-    private TableView<Kunde> kundentable;
+    private TableView<Kunde> kundenTable;
 
     @FXML
     private TableColumn<Kunde, Integer> kundenId;
@@ -87,8 +71,13 @@ public class Controller implements Initializable {
     @FXML
     private Button add;
 
+    @FXML
+    private Pane mitarbeiterTab;
+
+    @FXML
+    private MitarbeiterController mitarbeiterTabController;
+
     private Connection connection;
-    private MitarbeiterRepository mitarbeiterRepository;
     private ProduktRepository produktRepository;
     private KundenRepository kundenRepository;
 
@@ -96,16 +85,9 @@ public class Controller implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         connection = DriverManager.getConnection("jdbc:postgresql://localhost:5432/tischlerunternehmen", "admin", "password");
-        mitarbeiterRepository = new JdbcMitarbeiterRepository(connection);
-        produktRepository = new JdbcProduktRepository(connection);
-        kundenRepository = new JdbcKundenRepository(connection);
+        produktRepository = JdbcProduktRepository.getInstance(connection);
+        kundenRepository = JdbcKundenRepository.getInstance(connection);
 
-        namenskuerzel.setCellValueFactory(new PropertyValueFactory<>("namenskuerzel"));
-        name.setCellValueFactory(new PropertyValueFactory<>("name"));
-        gehalt.setCellValueFactory(new PropertyValueFactory<>("gehalt"));
-        mitarbeiterRolle.setCellValueFactory(r -> r.getValue().rollenProperty());
-
-        setMitarbeiterTable(mitarbeiterRepository.findAll());
 
         produktId.setCellValueFactory(new PropertyValueFactory<>("id"));
         produktart.setCellValueFactory(new PropertyValueFactory<>("produktart"));
@@ -128,9 +110,9 @@ public class Controller implements Initializable {
             }
         });
 
-        mitarbeiterTable.setOnMouseClicked(event -> handleEdit(event, mitarbeiterTable, Mitarbeiter.class));
+//        mitarbeiterTable.setOnMouseClicked(event -> handleEdit(event, mitarbeiterTable, Mitarbeiter.class));
         produkteTable.setOnMouseClicked(event -> handleEdit(event, produkteTable, Produkt.class));
-        kundentable.setOnMouseClicked(event -> handleEdit(event, kundentable, Kunde.class));
+        kundenTable.setOnMouseClicked(event -> handleEdit(event, kundenTable, Kunde.class));
 
         helpAbout.setOnAction(event -> {
             var pane = new GridPane();
@@ -160,84 +142,25 @@ public class Controller implements Initializable {
         if (selected == null) {
             return;
         }
-        openEditWindow(clazz, selected);
+
+        var utils = Utils.instance(connection);
+        utils.openEditWindow(clazz, selected);
     }
 
     private void setKundenTable(List<Kunde> all) {
         var produktList = FXCollections.observableArrayList(all);
-        this.kundentable.setItems(produktList);
+        Platform.runLater(() -> kundenTable.setItems(produktList));
     }
 
     private void setProdukteTable(List<Produkt> produkte) {
         ObservableList<Produkt> produktList = FXCollections.observableArrayList(produkte);
-        this.produkteTable.setItems(produktList);
+        Platform.runLater(() -> produkteTable.setItems(produktList));
     }
 
-    private void setMitarbeiterTable(List<Mitarbeiter> mitarbeiterList) {
-        var olist = FXCollections.observableList(mitarbeiterList);
-        mitarbeiterTable.setItems(olist);
-    }
-
-    @SneakyThrows
-    private void openEditWindow(Class<? extends Persitable> clazz, Persitable persitable) {
-        var fields = Arrays.stream(clazz.getDeclaredFields())
-                .filter(f -> f.isAnnotationPresent(Render.class))
-                .toList();
-
-        var pane = new GridPane();
-        pane.setPadding(new Insets(10, 10, 10, 10));
-        pane.setHgap(10);
-        pane.setVgap(30);
-
-        for (int i = 0; i < fields.size(); i++) {
-            var field = fields.get(i);
-            var methodName = "get" + toFirstLetterUppercase(field.getName());
-
-            var getMethod = clazz.getMethod(methodName);
-            var returnValue = getMethod.invoke(persitable);
-
-            Node type = getNodeForType(getMethod, returnValue);
-            if (field.isAnnotationPresent(NotEditable.class)) {
-                type = new Label(returnValue.toString());
-            }
-            var labelText = toFirstLetterUppercase(field.getName());
-            pane.addRow(i, new Label(labelText), type);
-        }
-        var stage = new Stage();
-        stage.setScene(new Scene(pane));
-        stage.setTitle("Edit " + clazz.getSimpleName());
-        stage.initModality(Modality.WINDOW_MODAL);
-        stage.initOwner(this.tabpane.getScene().getWindow());
-        stage.resizableProperty().setValue(false);
-        stage.show();
-    }
-
-    private String toFirstLetterUppercase(String name) {
-        return name.substring(0, 1).toUpperCase() + name.substring(1);
-    }
-
-    private Node getNodeForType(Method getMethod, Object returnValue) {
-        return switch (getMethod.getReturnType().getSimpleName()) {
-            case "String", "Integer", "Double", "double" -> new TextField(returnValue.toString());
-            case "Rolle", "Holzart" -> {
-                var choiceBox = new ChoiceBox<>();
-                if (returnValue instanceof Rolle r) {
-                    choiceBox.getItems().addAll(Rolle.values());
-                    choiceBox.getSelectionModel().select(r);
-                } else if (returnValue instanceof Holzart h) {
-                    choiceBox.getItems().addAll(Holzart.values());
-                    choiceBox.getSelectionModel().select(h);
-                }
-                yield choiceBox;
-            }
-            default -> throw new IllegalArgumentException("Unsupported type" + getMethod.getReturnType().getSimpleName());
-        };
-    }
 
     @SneakyThrows
     public void closeDB() {
         connection.close();
+        mitarbeiterTabController.closeDB();
     }
-
-
 }

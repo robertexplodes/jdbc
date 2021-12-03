@@ -7,9 +7,24 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
-public record JdbcMitarbeiterRepository(Connection connection) implements MitarbeiterRepository {
+public final class JdbcMitarbeiterRepository implements MitarbeiterRepository {
+
+    private static JdbcMitarbeiterRepository instance;
+    private final Connection connection;
+
+    private JdbcMitarbeiterRepository(Connection connection) {
+        this.connection = connection;
+    }
+
+    public static JdbcMitarbeiterRepository getInstance(Connection connection) {
+        if (instance == null) {
+            instance = new JdbcMitarbeiterRepository(connection);
+        }
+        return instance;
+    }
 
     private Optional<Mitarbeiter> mitarbeiterOfResultset(ResultSet resultSet) throws SQLException {
         var namenskuerzel = resultSet.getString("namenskuerzel");
@@ -124,4 +139,28 @@ public record JdbcMitarbeiterRepository(Connection connection) implements Mitarb
         }
         return Optional.empty();
     }
+
+    public Connection connection() {
+        return connection;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == this) return true;
+        if (obj == null || obj.getClass() != this.getClass()) return false;
+        var that = (JdbcMitarbeiterRepository) obj;
+        return Objects.equals(this.connection, that.connection);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(connection);
+    }
+
+    @Override
+    public String toString() {
+        return "JdbcMitarbeiterRepository[" +
+                "connection=" + connection + ']';
+    }
+
 }

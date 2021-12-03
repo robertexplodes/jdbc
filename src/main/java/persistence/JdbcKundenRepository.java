@@ -9,9 +9,23 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
-public record JdbcKundenRepository(Connection connection) implements KundenRepository {
+public final class JdbcKundenRepository implements KundenRepository {
+
+    private static JdbcKundenRepository instance = null;
+    private final Connection connection;
+
+    private JdbcKundenRepository(Connection connection) {
+        this.connection = connection;
+    }
+
+    public static JdbcKundenRepository getInstance(Connection connection) {
+        if (instance == null)
+            instance = new JdbcKundenRepository(connection);
+        return instance;
+    }
 
     private Optional<Kunde> kundeOfResultSet(ResultSet resultSet) throws SQLException {
         var id = resultSet.getInt("kunden_id");
@@ -22,7 +36,7 @@ public record JdbcKundenRepository(Connection connection) implements KundenRepos
 
     @Override
     public List<Bestellung> findAllBestellungen(Kunde kunde) throws SQLException {
-        var bestellungRepository = new JdbcBestellungRepository(connection);
+        var bestellungRepository = JdbcBestellungRepository.getInstance(connection);
         return bestellungRepository.findAllByKunde(kunde);
     }
 
@@ -107,4 +121,28 @@ public record JdbcKundenRepository(Connection connection) implements KundenRepos
         }
         return Optional.empty();
     }
+
+    public Connection connection() {
+        return connection;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == this) return true;
+        if (obj == null || obj.getClass() != this.getClass()) return false;
+        var that = (JdbcKundenRepository) obj;
+        return Objects.equals(this.connection, that.connection);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(connection);
+    }
+
+    @Override
+    public String toString() {
+        return "JdbcKundenRepository[" +
+                "connection=" + connection + ']';
+    }
+
 }

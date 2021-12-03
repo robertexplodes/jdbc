@@ -23,7 +23,7 @@ class JdbcMitarbeiterRepositoryTest {
     @BeforeEach
     void createRepository() throws SQLException {
         connection = connectionSupplier.getConnection();
-        mitarbeiterRepository = new JdbcMitarbeiterRepository(connection);
+        mitarbeiterRepository = JdbcMitarbeiterRepository.getInstance(connection);
     }
 
     @AfterEach

@@ -30,14 +30,7 @@
         <tabs>
           <Tab text="Mitarbeiter">
                <content>
-                  <TableView fx:id="mitarbeiterTable" prefHeight="200.0" prefWidth="200.0">
-                    <columns>
-                      <TableColumn fx:id="namenskuerzel" prefWidth="102.0" resizable="false" text="Namenskuerzel" />
-                      <TableColumn fx:id="name" prefWidth="346.0" resizable="false" text="Name" />
-                        <TableColumn fx:id="gehalt" minWidth="0.0" prefWidth="131.0" resizable="false" text="Gehalt" />
-                        <TableColumn fx:id="mitarbeiterRolle" prefWidth="195.0" text="Rolle" />
-                    </columns>
-                  </TableView>
+                  <fx:include fx:id="mitarbeiterTab"  source="mitarbeiter.fxml"/>
                </content>
             </Tab>
           <Tab text="Produkte">

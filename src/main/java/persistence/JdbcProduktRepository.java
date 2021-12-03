@@ -9,9 +9,25 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
-public record JdbcProduktRepository(Connection connection) implements ProduktRepository {
+public final class JdbcProduktRepository implements ProduktRepository {
+
+    private static JdbcProduktRepository instance;
+    private final Connection connection;
+
+    private JdbcProduktRepository(Connection connection) {
+        this.connection = connection;
+    }
+
+    public static JdbcProduktRepository getInstance(Connection connection) {
+        if (instance == null) {
+            instance = new JdbcProduktRepository(connection);
+        }
+        return instance;
+    }
+
 
     private Optional<Produkt> produktOfResultSet(ResultSet resultSet) throws SQLException {
         var produktart = resultSet.getString("produktart");
@@ -123,4 +139,28 @@ public record JdbcProduktRepository(Connection connection) implements ProduktRep
         }
         return Optional.empty();
     }
+
+    public Connection connection() {
+        return connection;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == this) return true;
+        if (obj == null || obj.getClass() != this.getClass()) return false;
+        var that = (JdbcProduktRepository) obj;
+        return Objects.equals(this.connection, that.connection);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(connection);
+    }
+
+    @Override
+    public String toString() {
+        return "JdbcProduktRepository[" +
+                "connection=" + connection + ']';
+    }
+
 }

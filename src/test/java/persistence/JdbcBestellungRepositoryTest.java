@@ -25,8 +25,8 @@ class JdbcBestellungRepositoryTest {
     @BeforeEach
     void createRepository() throws SQLException {
         connection = connectionSupplier.getConnection();
-        kundenRepository = new JdbcKundenRepository(connection);
-        bestellungRepository = new JdbcBestellungRepository(connection);
+        kundenRepository = JdbcKundenRepository.getInstance(connection);
+        bestellungRepository = JdbcBestellungRepository.getInstance(connection);
     }
 
     @AfterEach
@@ -48,7 +48,7 @@ class JdbcBestellungRepositoryTest {
                 new Produkt(1, Holzart.EICHE, "Schreibtisch"),
                 new Produkt(2, Holzart.TANNE, "Bett")
         );
-        var produktRepository = new JdbcProduktRepository(connection);
+        var produktRepository = JdbcProduktRepository.getInstance(connection);
         for (var produkt : produkte) {
             produktRepository.save(produkt);
         }

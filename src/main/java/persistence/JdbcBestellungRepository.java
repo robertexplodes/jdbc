@@ -8,7 +8,21 @@ import java.sql.*;
 import java.sql.Date;
 import java.util.*;
 
-public record JdbcBestellungRepository(Connection connection) implements BestellungRepository {
+public final class JdbcBestellungRepository implements BestellungRepository {
+
+    private static JdbcBestellungRepository instance = null;
+    private final Connection connection;
+
+    private JdbcBestellungRepository(Connection connection) {
+        this.connection = connection;
+    }
+
+    public static JdbcBestellungRepository getInstance(Connection connection) {
+        if (instance == null) {
+            instance = new JdbcBestellungRepository(connection);
+        }
+        return instance;
+    }
 
     private Optional<Bestellung> bestellungOfResultSet(ResultSet resultSet) throws SQLException {
         var bestellnummer = resultSet.getInt("bestellnummer");
@@ -16,8 +30,8 @@ public record JdbcBestellungRepository(Connection connection) implements Bestell
         var kundenID = resultSet.getInt("kunde");
         var mitarbeiterID = resultSet.getString("mitarbeiter");
 
-        var mitarbeiterRepository = new JdbcMitarbeiterRepository(connection);
-        var kundeRepository = new JdbcKundenRepository(connection);
+        var mitarbeiterRepository = JdbcMitarbeiterRepository.getInstance(connection);
+        var kundeRepository = JdbcKundenRepository.getInstance(connection);
         var mitabeiter = mitarbeiterRepository.findById(mitarbeiterID).orElse(null);
         var kunde = kundeRepository.findById(kundenID).orElse(null);
         return Optional.of(new Bestellung(bestellnummer, bestelldatum.toLocalDate(), kunde, mitabeiter));
@@ -34,7 +48,7 @@ public record JdbcBestellungRepository(Connection connection) implements Bestell
             statement.setInt(1, bestellung.getBestellungId());
             var quantity = new HashMap<Produkt, Integer>();
             var resultSet = statement.executeQuery();
-            var produktRepository = new JdbcProduktRepository(connection);
+            var produktRepository = JdbcProduktRepository.getInstance(connection);
             while (resultSet.next()) {
                 int amount = resultSet.getInt("amount");
                 var produkt = produktRepository.findById(resultSet.getInt("produkttyp"));
@@ -172,4 +186,28 @@ public record JdbcBestellungRepository(Connection connection) implements Bestell
         }
         return Optional.empty();
     }
+
+    public Connection connection() {
+        return connection;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == this) return true;
+        if (obj == null || obj.getClass() != this.getClass()) return false;
+        var that = (JdbcBestellungRepository) obj;
+        return Objects.equals(this.connection, that.connection);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(connection);
+    }
+
+    @Override
+    public String toString() {
+        return "JdbcBestellungRepository[" +
+                "connection=" + connection + ']';
+    }
+
 }

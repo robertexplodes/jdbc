@@ -46,7 +46,7 @@ insert into Kunden (kunden_id, email, name)
 values (4, 'nikolaus@gmail.com', 'Zachhalmel Nikolaus');
 
 insert into Kunden (kunden_id, email, name)
-values (5, 'götz@gmail.com', 'Götz Jacob');
+values (5, 'goetz@gmail.com', 'Götz Jacob');
 
 -- Bewertung
 insert into Bewertungen (bewertungsnummer, titel, bewertungs_text, sterne, kunde)

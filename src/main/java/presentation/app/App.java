@@ -11,7 +11,7 @@ public class App extends Application {
     private FXMLLoader loader;
     @Override
     public void start(Stage stage) throws Exception {
-        loader = new FXMLLoader(getClass().getResource("/app.fxml"));
+        loader = new FXMLLoader(getClass().getResource("/app1.fxml"));
 
         Parent root = loader.load();
 
@@ -23,7 +23,6 @@ public class App extends Application {
     @Override
     public void stop() throws Exception {
         Controller controller = loader.getController();
-
         controller.closeDB();
     }
 }

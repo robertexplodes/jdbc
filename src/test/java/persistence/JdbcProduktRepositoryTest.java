@@ -22,7 +22,7 @@ class JdbcProduktRepositoryTest {
     @BeforeEach
     void setUp() throws SQLException {
         connection = connectionSupplier.getConnection();
-        produktRepository = new JdbcProduktRepository(connection);
+        produktRepository = JdbcProduktRepository.getInstance(connection);
     }
 
     @AfterEach

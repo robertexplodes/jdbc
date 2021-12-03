@@ -24,7 +24,7 @@ class JdbcKundenRepositoryTest {
     @BeforeEach
     void createRepository() throws SQLException {
         connection = connectionSupplier.getConnection();
-        kundenRepository = new JdbcKundenRepository(connection);
+        kundenRepository = JdbcKundenRepository.getInstance(connection);
     }
 
     @AfterEach
@@ -43,7 +43,7 @@ class JdbcKundenRepositoryTest {
                 new Bestellung(1, LocalDate.now(), kunden.get(0), null),
                 new Bestellung(2, LocalDate.now(), kunden.get(1), null)
         );
-        var bestellungenRepository = new JdbcBestellungRepository(connection);
+        var bestellungenRepository = JdbcBestellungRepository.getInstance(connection);
         for (var kunde : kunden) {
             kundenRepository.save(kunde);
         }
