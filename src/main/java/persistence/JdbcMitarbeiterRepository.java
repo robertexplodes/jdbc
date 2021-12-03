@@ -1,13 +1,13 @@
 package persistence;
 
 import domain.Mitarbeiter;
+import lombok.SneakyThrows;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
 public final class JdbcMitarbeiterRepository implements MitarbeiterRepository {
@@ -19,8 +19,9 @@ public final class JdbcMitarbeiterRepository implements MitarbeiterRepository {
         this.connection = connection;
     }
 
+    @SneakyThrows
     public static JdbcMitarbeiterRepository getInstance(Connection connection) {
-        if (instance == null) {
+        if (instance == null || instance.connection.isClosed()) {
             instance = new JdbcMitarbeiterRepository(connection);
         }
         return instance;
@@ -139,28 +140,4 @@ public final class JdbcMitarbeiterRepository implements MitarbeiterRepository {
         }
         return Optional.empty();
     }
-
-    public Connection connection() {
-        return connection;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (obj == this) return true;
-        if (obj == null || obj.getClass() != this.getClass()) return false;
-        var that = (JdbcMitarbeiterRepository) obj;
-        return Objects.equals(this.connection, that.connection);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(connection);
-    }
-
-    @Override
-    public String toString() {
-        return "JdbcMitarbeiterRepository[" +
-                "connection=" + connection + ']';
-    }
-
 }

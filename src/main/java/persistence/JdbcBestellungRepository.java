@@ -3,6 +3,7 @@ package persistence;
 import domain.Bestellung;
 import domain.Kunde;
 import domain.Produkt;
+import lombok.SneakyThrows;
 
 import java.sql.*;
 import java.sql.Date;
@@ -17,8 +18,9 @@ public final class JdbcBestellungRepository implements BestellungRepository {
         this.connection = connection;
     }
 
+    @SneakyThrows
     public static JdbcBestellungRepository getInstance(Connection connection) {
-        if (instance == null) {
+        if (instance == null || instance.connection.isClosed()) {
             instance = new JdbcBestellungRepository(connection);
         }
         return instance;
@@ -186,28 +188,4 @@ public final class JdbcBestellungRepository implements BestellungRepository {
         }
         return Optional.empty();
     }
-
-    public Connection connection() {
-        return connection;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (obj == this) return true;
-        if (obj == null || obj.getClass() != this.getClass()) return false;
-        var that = (JdbcBestellungRepository) obj;
-        return Objects.equals(this.connection, that.connection);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(connection);
-    }
-
-    @Override
-    public String toString() {
-        return "JdbcBestellungRepository[" +
-                "connection=" + connection + ']';
-    }
-
 }

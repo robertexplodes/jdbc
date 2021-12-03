@@ -6,7 +6,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Defines if a property should be rendered in the UI.
+ * Defines if a property should be rendered in the edit UI.
  */
 // TODO: Wenn bei Type gesetzt, dann auch bei Instanz
 @Target({ElementType.FIELD, ElementType.TYPE})

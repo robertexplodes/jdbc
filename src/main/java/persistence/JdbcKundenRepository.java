@@ -2,6 +2,7 @@ package persistence;
 
 import domain.Bestellung;
 import domain.Kunde;
+import lombok.SneakyThrows;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -9,7 +10,6 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
 public final class JdbcKundenRepository implements KundenRepository {
@@ -20,9 +20,9 @@ public final class JdbcKundenRepository implements KundenRepository {
     private JdbcKundenRepository(Connection connection) {
         this.connection = connection;
     }
-
+    @SneakyThrows
     public static JdbcKundenRepository getInstance(Connection connection) {
-        if (instance == null)
+        if (instance == null || instance.connection.isClosed())
             instance = new JdbcKundenRepository(connection);
         return instance;
     }
@@ -121,28 +121,4 @@ public final class JdbcKundenRepository implements KundenRepository {
         }
         return Optional.empty();
     }
-
-    public Connection connection() {
-        return connection;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (obj == this) return true;
-        if (obj == null || obj.getClass() != this.getClass()) return false;
-        var that = (JdbcKundenRepository) obj;
-        return Objects.equals(this.connection, that.connection);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(connection);
-    }
-
-    @Override
-    public String toString() {
-        return "JdbcKundenRepository[" +
-                "connection=" + connection + ']';
-    }
-
 }

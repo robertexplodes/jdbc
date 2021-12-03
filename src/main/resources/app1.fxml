@@ -34,25 +34,14 @@
                </content>
             </Tab>
           <Tab text="Produkte">
-               <content>
-                  <TableView fx:id="produkteTable" prefHeight="200.0" prefWidth="200.0">
-                    <columns>
-                      <TableColumn fx:id="produktId" prefWidth="75.0" resizable="false" text="Produkt-ID" />
-                      <TableColumn fx:id="holzart" prefWidth="289.0" resizable="false" text="Holzart" />
-                        <TableColumn fx:id="produktart" minWidth="0.0" prefWidth="332.0" resizable="false" text="Produktart" />
-                    </columns>
-                  </TableView>
-               </content></Tab>
+              <content>
+                  <fx:include fx:id="produkteTab"  source="produkte.fxml"/>
+              </content>
+          </Tab>
             <Tab text="Kunde">
-               <content>
-                  <TableView fx:id="kundenTable" prefHeight="200.0" prefWidth="200.0">
-                    <columns>
-                      <TableColumn fx:id="kundenId" prefWidth="75.0" resizable="false" text="Id" />
-                      <TableColumn fx:id="kundenName" prefWidth="287.0" resizable="false" text="Name" />
-                        <TableColumn fx:id="kundenEmail" prefWidth="412.0" resizable="false" text="E-Mail" />
-                    </columns>
-                  </TableView>
-               </content>
+                <content>
+                    <fx:include fx:id="kundenTab"  source="kunde.fxml"/>
+                </content>
             </Tab>
         </tabs>
       </TabPane>

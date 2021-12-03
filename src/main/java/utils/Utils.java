@@ -1,4 +1,4 @@
-package presentation;
+package utils;
 
 import domain.*;
 import domain.interfaces.NotEditable;
@@ -19,12 +19,12 @@ import persistence.*;
 import java.lang.reflect.Method;
 import java.sql.Connection;
 import java.util.*;
-
+// TODO: make this class Single Responsibility
 public class Utils {
 
     private static Utils instance;
 
-    public static Utils instance(Connection connection) {
+    public static Utils getInstance(Connection connection) {
         if(instance == null)
             instance = new Utils(connection);
         return instance;

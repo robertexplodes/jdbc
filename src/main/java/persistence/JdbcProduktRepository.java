@@ -2,6 +2,7 @@ package persistence;
 
 import domain.Holzart;
 import domain.Produkt;
+import lombok.SneakyThrows;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -9,7 +10,6 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
 public final class JdbcProduktRepository implements ProduktRepository {
@@ -21,8 +21,9 @@ public final class JdbcProduktRepository implements ProduktRepository {
         this.connection = connection;
     }
 
+    @SneakyThrows
     public static JdbcProduktRepository getInstance(Connection connection) {
-        if (instance == null) {
+        if (instance == null || instance.connection.isClosed()) {
             instance = new JdbcProduktRepository(connection);
         }
         return instance;
@@ -139,28 +140,4 @@ public final class JdbcProduktRepository implements ProduktRepository {
         }
         return Optional.empty();
     }
-
-    public Connection connection() {
-        return connection;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (obj == this) return true;
-        if (obj == null || obj.getClass() != this.getClass()) return false;
-        var that = (JdbcProduktRepository) obj;
-        return Objects.equals(this.connection, that.connection);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(connection);
-    }
-
-    @Override
-    public String toString() {
-        return "JdbcProduktRepository[" +
-                "connection=" + connection + ']';
-    }
-
 }

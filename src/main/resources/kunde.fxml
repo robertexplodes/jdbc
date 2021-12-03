@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.Pane?>
+
+<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="772.0" xmlns="http://javafx.com/javafx/15.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="presentation.controller.KundeController">
+   <children>
+      <TableView fx:id="kundeTable" prefHeight="400.0" prefWidth="772.0">
+         <columns>
+            <TableColumn fx:id="id" prefWidth="79.0" resizable="false" text="Id" />
+            <TableColumn fx:id="name" prefWidth="376.0" resizable="false" text="Name" />
+            <TableColumn fx:id="email" prefWidth="316.0" resizable="false" text="Email" />
+         </columns>
+      </TableView>
+   </children>
+</Pane>

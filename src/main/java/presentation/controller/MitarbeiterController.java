@@ -1,30 +1,20 @@
 package presentation.controller;
 
-import domain.Holzart;
 import domain.Mitarbeiter;
-import domain.Rolle;
-import domain.interfaces.NotEditable;
-import domain.interfaces.Persitable;
-import domain.interfaces.Render;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.geometry.Insets;
-import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseButton;
-import javafx.scene.layout.GridPane;
-import javafx.stage.Stage;
 import lombok.SneakyThrows;
 import persistence.JdbcMitarbeiterRepository;
 import persistence.MitarbeiterRepository;
-import presentation.Utils;
+import utils.Utils;
+import utils.ConnectionManager;
 
-import java.lang.reflect.Method;
 import java.net.URL;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.*;
 
@@ -52,9 +42,9 @@ public class MitarbeiterController implements Initializable {
     @SneakyThrows
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        connection = DriverManager.getConnection("jdbc:postgresql://localhost:5432/tischlerunternehmen", "admin", "password");
+        connection = ConnectionManager.getConnection();
         mitarbeiterRepository = JdbcMitarbeiterRepository.getInstance(connection);
-        utils = Utils.instance(connection);
+        utils = Utils.getInstance(connection);
 
 
         namenskuerzel.setCellValueFactory(new PropertyValueFactory<>("namenskuerzel"));

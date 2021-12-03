@@ -23,4 +23,5 @@ public interface Repository<P, T extends Persitable> {
     void update(T entity) throws SQLException;
 
     Optional<T> findById(P primaryKey) throws SQLException;
+
 }

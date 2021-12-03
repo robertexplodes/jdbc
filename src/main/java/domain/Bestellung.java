@@ -14,8 +14,8 @@ public class Bestellung implements Persitable {
 
     @With
     private Integer bestellungId;
-    @NonNull
 
+    @NonNull
     private LocalDate bestellDatum;
 
     private Kunde kunde; // can be null, when client gets deleted
