@@ -15,7 +15,7 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import lombok.SneakyThrows;
 import persistence.Repository;
-import utils.InstanceManager;
+import utils.PersitableInstanceManager;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -61,7 +61,7 @@ public record EditControllerFX<T extends Persitable>(Repository<?, T> repository
 
         Button save = new Button("Save");
         save.setOnAction(event -> {
-            var instanceManager = InstanceManager.getInstance();
+            var instanceManager = PersitableInstanceManager.getInstance();
             var newInstance = instanceManager.getNewValueForInstance(clazz, constructorArguments, inputFields);
             if (newInstance.isEmpty())
                 return;

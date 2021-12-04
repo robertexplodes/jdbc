@@ -3,6 +3,9 @@ package domain;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -26,6 +29,15 @@ class BestellungTest {
         assertNotEquals(b1, b2);
     }
 
-
-
+    @Test
+    void correct_compare_to_implementation() {
+        var bestellungen = new ArrayList<>(List.of(
+                new Bestellung(2, LocalDate.now(),
+                        new Kunde(1, "Hansi", "Hansi@hinterseer.com"), null),
+                new Bestellung(1, LocalDate.now(),
+                        new Kunde(2, "Josef", "josef@mayer.at"), null)
+        ));
+        Collections.sort(bestellungen);
+        assertEquals(1, bestellungen.get(0).getBestellungId());
+    }
 }

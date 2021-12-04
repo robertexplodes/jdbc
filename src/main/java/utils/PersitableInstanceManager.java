@@ -8,15 +8,15 @@ import javafx.scene.control.TextField;
 
 import java.util.*;
 
-public class InstanceManager {
-    private static InstanceManager instance = null;
+public class PersitableInstanceManager {
+    private static PersitableInstanceManager instance = null;
 
-    private InstanceManager() {
+    private PersitableInstanceManager() {
     }
 
-    public static InstanceManager getInstance() {
+    public static PersitableInstanceManager getInstance() {
         if (instance == null) {
-            instance = new InstanceManager();
+            instance = new PersitableInstanceManager();
         }
         return instance;
     }
