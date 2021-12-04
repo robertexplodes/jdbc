@@ -58,7 +58,6 @@ public class Controller implements Initializable {
     public void initialize(URL url, ResourceBundle resourceBundle) {
         connection = ConnectionManager.getConnection();
 
-
         add.setOnAction(event -> {
             var text = tabpane.getSelectionModel().getSelectedItem().getText();
             if (text.equals("Produkte")) {
@@ -92,6 +91,5 @@ public class Controller implements Initializable {
     @SneakyThrows
     public void closeDB() {
         connection.close();
-        mitarbeiterTabController.closeDB();
     }
 }

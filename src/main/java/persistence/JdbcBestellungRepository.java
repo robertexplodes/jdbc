@@ -9,7 +9,7 @@ import java.sql.*;
 import java.sql.Date;
 import java.util.*;
 
-public final class JdbcBestellungRepository implements BestellungRepository {
+public class JdbcBestellungRepository implements BestellungRepository {
 
     private static JdbcBestellungRepository instance = null;
     private final Connection connection;

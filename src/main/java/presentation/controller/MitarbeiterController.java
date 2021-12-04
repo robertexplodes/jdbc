@@ -10,12 +10,10 @@ import javafx.scene.input.MouseButton;
 import lombok.SneakyThrows;
 import persistence.JdbcMitarbeiterRepository;
 import persistence.MitarbeiterRepository;
-import utils.Utils;
 import utils.ConnectionManager;
 
 import java.net.URL;
 import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.*;
 
 public class MitarbeiterController implements Initializable {
@@ -37,15 +35,15 @@ public class MitarbeiterController implements Initializable {
 
     private Connection connection;
     private MitarbeiterRepository mitarbeiterRepository;
-    private Utils utils;
+    private EditController<Mitarbeiter> editController;
+
 
     @SneakyThrows
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         connection = ConnectionManager.getConnection();
         mitarbeiterRepository = JdbcMitarbeiterRepository.getInstance(connection);
-        utils = Utils.getInstance(connection);
-
+        editController = new EditControllerFX<>(mitarbeiterRepository, mitarbeiterTable);
 
         namenskuerzel.setCellValueFactory(new PropertyValueFactory<>("namenskuerzel"));
         name.setCellValueFactory(new PropertyValueFactory<>("name"));
@@ -62,16 +60,12 @@ public class MitarbeiterController implements Initializable {
             if(mitarbeiter == null) {
                 return;
             }
-            utils.openEditWindow(Mitarbeiter.class, mitarbeiter);
+            editController.openEditWindow(mitarbeiter);
         });
     }
 
     private void setMitarbeiterTable(List<Mitarbeiter> mitarbeiterList) {
         var observableList = FXCollections.observableList(mitarbeiterList);
         mitarbeiterTable.setItems(observableList);
-    }
-
-    public void closeDB() throws SQLException {
-        connection.close();
     }
 }

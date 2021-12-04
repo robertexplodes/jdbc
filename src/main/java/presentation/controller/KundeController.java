@@ -7,6 +7,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.MouseButton;
 import lombok.SneakyThrows;
 import persistence.JdbcKundenRepository;
 import persistence.KundenRepository;
@@ -31,19 +32,32 @@ public class KundeController implements Initializable {
     private TableColumn<Kunde, String> email;
 
     private KundenRepository kundenRepository;
+    private EditController<Kunde> editController;
+
 
     @SneakyThrows
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         var connection = ConnectionManager.getConnection();
         kundenRepository = JdbcKundenRepository.getInstance(connection);
-
+        editController = new EditControllerFX<>(kundenRepository, kundeTable);
         id.setCellValueFactory(new PropertyValueFactory<>("id"));
         name.setCellValueFactory(new PropertyValueFactory<>("name"));
         email.setCellValueFactory(new PropertyValueFactory<>("email"));
 
 
         setKundeTable(kundenRepository.findAll());
+
+        kundeTable.setOnMouseClicked(event -> {
+            if (event.getButton() == MouseButton.PRIMARY && event.getClickCount() != 2) {
+                return;
+            }
+            var mitarbeiter = kundeTable.getSelectionModel().getSelectedItem();
+            if(mitarbeiter == null) {
+                return;
+            }
+            editController.openEditWindow(mitarbeiter);
+        });
     }
 
     private void setKundeTable(List<Kunde> kunden) {

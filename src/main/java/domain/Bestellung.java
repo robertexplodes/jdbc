@@ -7,10 +7,11 @@ import lombok.NonNull;
 import lombok.With;
 
 import java.time.LocalDate;
+import java.util.Comparator;
 import java.util.Objects;
 @Getter
 @AllArgsConstructor
-public class Bestellung implements Persitable {
+public class Bestellung implements Persitable, Comparable<Bestellung> {
 
     @With
     private Integer bestellungId;
@@ -33,5 +34,11 @@ public class Bestellung implements Persitable {
     @Override
     public int hashCode() {
         return Objects.hash(bestellungId);
+    }
+
+    @Override
+    public int compareTo(@NonNull Bestellung o) {
+        return Comparator.comparing(Bestellung::getBestellungId)
+                .compare(this, o);
     }
 }

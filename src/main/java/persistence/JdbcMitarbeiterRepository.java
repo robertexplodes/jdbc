@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public final class JdbcMitarbeiterRepository implements MitarbeiterRepository {
+public class JdbcMitarbeiterRepository implements MitarbeiterRepository {
 
     private static JdbcMitarbeiterRepository instance;
     private final Connection connection;

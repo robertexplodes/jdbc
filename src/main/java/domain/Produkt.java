@@ -1,21 +1,25 @@
 package domain;
 
-import domain.interfaces.NotEditable;
+import domain.interfaces.RenderNotEditable;
 import domain.interfaces.Persitable;
 import domain.interfaces.Render;
 import javafx.beans.property.SimpleObjectProperty;
 import lombok.*;
 
+import java.util.Comparator;
 import java.util.Objects;
 
-@AllArgsConstructor
 @Getter
 @ToString
-public class Produkt implements Persitable {
+public class Produkt implements Persitable, Comparable<Produkt> {
 
     public Produkt(Integer id, @NonNull String holzart, @NonNull String produktart) {
+        this(id, Holzart.valueOf(holzart), produktart);
+    }
+
+    public Produkt(Integer id, @NonNull Holzart holzart, @NonNull String produktart) {
         this.id = id;
-        this.holzart = Holzart.valueOf(holzart);
+        this.holzart = holzart;
         this.produktart = produktart;
     }
 
@@ -26,7 +30,7 @@ public class Produkt implements Persitable {
     }
 
     @With
-    @NotEditable
+    @RenderNotEditable
     @Render
     private Integer id;
 
@@ -49,5 +53,11 @@ public class Produkt implements Persitable {
     @Override
     public int hashCode() {
         return Objects.hash(id);
+    }
+
+    @Override
+    public int compareTo(@NonNull Produkt o) {
+        return Comparator.comparing(Produkt::getId)
+                .compare(this, o);
     }
 }

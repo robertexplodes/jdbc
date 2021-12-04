@@ -1,19 +1,19 @@
 package domain;
 
-import domain.interfaces.NotEditable;
+import domain.interfaces.RenderNotEditable;
 import domain.interfaces.Persitable;
 import domain.interfaces.Render;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.With;
 
+import java.util.Comparator;
 import java.util.Objects;
 
 @Getter
-public class Kunde implements Persitable {
+public class Kunde implements Persitable, Comparable<Kunde> {
     @With
-    @NotEditable
-    @Render
+    @RenderNotEditable
     private Integer id;
     @NonNull
     @Render
@@ -48,5 +48,11 @@ public class Kunde implements Persitable {
     @Override
     public int hashCode() {
         return Objects.hash(id);
+    }
+
+    @Override
+    public int compareTo(@NonNull Kunde o) {
+        return Comparator.comparing(Kunde::getId)
+                .compare(this, o);
     }
 }

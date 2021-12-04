@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public final class JdbcProduktRepository implements ProduktRepository {
+public class JdbcProduktRepository implements ProduktRepository {
 
     private static JdbcProduktRepository instance;
     private final Connection connection;
