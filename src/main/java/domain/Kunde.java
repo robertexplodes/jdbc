@@ -1,8 +1,6 @@
 package domain;
 
-import domain.interfaces.RenderNotEditable;
 import domain.interfaces.Persitable;
-import domain.interfaces.Render;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.With;
@@ -13,21 +11,17 @@ import java.util.Objects;
 @Getter
 public class Kunde implements Persitable, Comparable<Kunde> {
     @With
-    @RenderNotEditable
     private Integer id;
     @NonNull
-    @Render
-    private String name;
+    private final String name;
     @NonNull
-    @Render
-    private String email;
+    private final String email;
 
     public Kunde(Integer id, @NonNull String name, @NonNull String email) {
         this.id = id;
         this.name = name;
         var emailRegex = "^[\\w-\\+]+(\\.[\\w]+)*@[\\w-]+(\\.[\\w]+)*(\\.[a-z]{2,})$";
         if(!email.matches(emailRegex)) {
-
             throw new IllegalArgumentException("Email is not valid " + email);
         }
         this.email = email;

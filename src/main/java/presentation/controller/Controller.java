@@ -7,6 +7,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.Button;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.stage.Modality;
@@ -37,10 +38,10 @@ public class Controller implements Initializable {
     private Pane mitarbeiterTab;
 
     @FXML
-    private MitarbeiterController mitarbeiterTabController;
+    private PersistableController mitarbeiterTabController;
 
     @FXML
-    private Pane produkteTab;
+    private Pane produktTab;
 
     @FXML
     private ProduktController produktTabController;
@@ -49,7 +50,10 @@ public class Controller implements Initializable {
     private Pane kundenTab;
 
     @FXML
-    private KundeController kundeTabController;
+    private KundeController kundenTabController;
+
+    @FXML
+    private TextField searchbar;
 
     private Connection connection;
 
@@ -61,10 +65,11 @@ public class Controller implements Initializable {
         add.setOnAction(event -> {
             var text = tabpane.getSelectionModel().getSelectedItem().getText();
             if (text.equals("Produkte")) {
-                System.out.println("produkte");
-            } else {
-                System.out.println("mitarbeiter");
+                produktTabController.openNewProduktWindow();
+            } else if("Mitarbeiter".equals(text)){
+                mitarbeiterTabController.openNewWindow();
             }
+
         });
 
         helpAbout.setOnAction(event -> {
@@ -85,8 +90,17 @@ public class Controller implements Initializable {
             stage.setScene(new Scene(pane));
             stage.show();
         });
-    }
 
+        searchbar.textProperty().addListener(i -> {
+            String value = searchbar.getText();
+
+            mitarbeiterTabController.searchForString(value);
+            produktTabController.findAllByAnyString(value);
+            kundenTabController.findAllByAnyString(value);
+        });
+
+
+    }
 
     @SneakyThrows
     public void closeDB() {

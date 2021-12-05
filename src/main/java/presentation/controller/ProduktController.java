@@ -7,6 +7,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
 import lombok.SneakyThrows;
 import persistence.JdbcProduktRepository;
@@ -14,7 +15,8 @@ import persistence.ProduktRepository;
 import utils.ConnectionManager;
 
 import java.net.URL;
-import java.util.List;
+import java.sql.SQLException;
+import java.util.Collection;
 import java.util.ResourceBundle;
 
 public class ProduktController implements Initializable {
@@ -33,15 +35,14 @@ public class ProduktController implements Initializable {
 
     private ProduktRepository produktRepository;
 
-    private EditController<Produkt> editController;
-
+    private UpdateController<Produkt> editController;
 
     @SneakyThrows
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         var connection = ConnectionManager.getConnection();
         produktRepository = JdbcProduktRepository.getInstance(connection);
-        editController = new EditControllerFX<>(produktRepository, produktTable);
+//        editController = new UpdateControllerFX<>();
 
         id.setCellValueFactory(new PropertyValueFactory<>("id"));
         holzart.setCellValueFactory(p -> p.getValue().holzartProperty());
@@ -53,16 +54,58 @@ public class ProduktController implements Initializable {
             if (event.getButton() == MouseButton.PRIMARY && event.getClickCount() != 2) {
                 return;
             }
-            var mitarbeiter = produktTable.getSelectionModel().getSelectedItem();
-            if(mitarbeiter == null) {
+            var produkt = produktTable.getSelectionModel().getSelectedItem();
+            if (produkt == null) {
                 return;
             }
-            editController.openEditWindow(mitarbeiter);
+            var newValue = editController.getValue();
+            if (newValue.isEmpty()) {
+                return;
+            }
+            try {
+                produktRepository.update(newValue.get());
+                setProduktTable(produktRepository.findAll());
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        });
+
+        produktTable.setOnKeyPressed(event -> {
+            if (event.getCode() != KeyCode.DELETE) {
+                return;
+            }
+            var selectedItem = produktTable.getSelectionModel().getSelectedItem();
+            if(selectedItem == null) {
+                return;
+            }
+            try {
+                produktRepository.delete(selectedItem);
+                setProduktTable(produktRepository.findAll());
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         });
     }
 
-    private void setProduktTable(List<Produkt> produkte) {
-        var observableList = FXCollections.observableList(produkte);
+
+
+    private void setProduktTable(Collection<Produkt> produkte) {
+        var sorted = produkte.stream().sorted().toList();
+        var observableList = FXCollections.observableList(sorted);
         produktTable.setItems(observableList);
+        produktTable.refresh();
+    }
+
+    public void findAllByAnyString(String value) {
+        try {
+            var allByHolzart = produktRepository.findAllByString(value);
+            setProduktTable(allByHolzart);
+        } catch (SQLException | IllegalArgumentException e) {
+            // ignore
+        }
+    }
+
+    public void openNewProduktWindow() {
+
     }
 }

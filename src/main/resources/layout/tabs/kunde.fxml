@@ -8,9 +8,9 @@
    <children>
       <TableView fx:id="kundeTable" prefHeight="400.0" prefWidth="772.0">
          <columns>
-            <TableColumn fx:id="id" prefWidth="79.0" resizable="false" text="Id" />
-            <TableColumn fx:id="name" prefWidth="376.0" resizable="false" text="Name" />
-            <TableColumn fx:id="email" prefWidth="316.0" resizable="false" text="Email" />
+            <TableColumn fx:id="id" prefWidth="79.0" resizable="false" sortable="false" text="Id" />
+            <TableColumn fx:id="name" prefWidth="376.0" resizable="false" sortable="false" text="Name" />
+            <TableColumn fx:id="email" prefWidth="316.0" resizable="false" sortable="false" text="Email" />
          </columns>
       </TableView>
    </children>

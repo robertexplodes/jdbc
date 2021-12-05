@@ -6,9 +6,7 @@ import lombok.SneakyThrows;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 public class JdbcMitarbeiterRepository implements MitarbeiterRepository {
 

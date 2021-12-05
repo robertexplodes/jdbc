@@ -14,7 +14,8 @@ import persistence.KundenRepository;
 import utils.ConnectionManager;
 
 import java.net.URL;
-import java.util.List;
+import java.sql.SQLException;
+import java.util.Collection;
 import java.util.ResourceBundle;
 
 public class KundeController implements Initializable {
@@ -32,7 +33,7 @@ public class KundeController implements Initializable {
     private TableColumn<Kunde, String> email;
 
     private KundenRepository kundenRepository;
-    private EditController<Kunde> editController;
+    private UpdateController<Kunde> editController;
 
 
     @SneakyThrows
@@ -40,7 +41,7 @@ public class KundeController implements Initializable {
     public void initialize(URL url, ResourceBundle resourceBundle) {
         var connection = ConnectionManager.getConnection();
         kundenRepository = JdbcKundenRepository.getInstance(connection);
-        editController = new EditControllerFX<>(kundenRepository, kundeTable);
+//        editController = new UpdateControllerFX<>();
         id.setCellValueFactory(new PropertyValueFactory<>("id"));
         name.setCellValueFactory(new PropertyValueFactory<>("name"));
         email.setCellValueFactory(new PropertyValueFactory<>("email"));
@@ -52,16 +53,33 @@ public class KundeController implements Initializable {
             if (event.getButton() == MouseButton.PRIMARY && event.getClickCount() != 2) {
                 return;
             }
-            var mitarbeiter = kundeTable.getSelectionModel().getSelectedItem();
-            if(mitarbeiter == null) {
+            var kunde = kundeTable.getSelectionModel().getSelectedItem();
+            if(kunde == null) {
                 return;
             }
-            editController.openEditWindow(mitarbeiter);
+            var newValue = editController.getValue();
+            if(newValue.isEmpty()) {
+                return;
+            }
+            try {
+                kundenRepository.update(newValue.get());
+                setKundeTable(kundenRepository.findAll());
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         });
     }
 
-    private void setKundeTable(List<Kunde> kunden) {
-        var observableList = FXCollections.observableList(kunden);
+    private void setKundeTable(Collection<Kunde> kunden) {
+        var sorted = kunden.stream().sorted().toList();
+        var observableList = FXCollections.observableList(sorted);
         kundeTable.setItems(observableList);
+        kundeTable.refresh();
+    }
+
+    @SneakyThrows
+    public void findAllByAnyString(String value) {
+        var allByStringInNameOrEmail = kundenRepository.findAllByStringInNameOrEmail(value);
+        setKundeTable(allByStringInNameOrEmail);
     }
 }

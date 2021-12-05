@@ -8,9 +8,8 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class JdbcProduktRepository implements ProduktRepository {
 
@@ -50,6 +49,26 @@ public class JdbcProduktRepository implements ProduktRepository {
                 """;
         try (var statement = connection.prepareStatement(sql)) {
             statement.setString(1, holzart.name());
+            var resultSet = statement.executeQuery();
+            var produkte = new ArrayList<Produkt>();
+            while (resultSet.next()) {
+                produktOfResultSet(resultSet).ifPresent(produkte::add);
+            }
+            return produkte;
+        }
+    }
+
+    @Override
+    public List<Produkt> findAllByString(String value) throws SQLException{
+        value = value.toUpperCase();
+        var sql = """
+                select produkttyp_id, produktart, holzart
+                from produkttypen
+                where UPPER(holzart) like ? or UPPER(produktart) like ?
+                """;
+        try(var statement = connection.prepareStatement(sql)) {
+            statement.setString(1, "%" + value + "%");
+            statement.setString(2, "%" + value + "%");
             var resultSet = statement.executeQuery();
             var produkte = new ArrayList<Produkt>();
             while (resultSet.next()) {

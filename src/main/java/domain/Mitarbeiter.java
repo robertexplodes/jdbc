@@ -1,8 +1,6 @@
 package domain;
 
-import domain.interfaces.RenderNotEditable;
 import domain.interfaces.Persitable;
-import domain.interfaces.Render;
 import javafx.beans.property.SimpleObjectProperty;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -17,24 +15,24 @@ import java.util.Objects;
 @Getter
 public class Mitarbeiter implements Persitable, Comparable<Mitarbeiter> {
     @NonNull
-    @RenderNotEditable
     private String namenskuerzel;
 
     @NonNull
-    @Render
     private String name;
 
     @NonNull
-    @Render
     private Rolle rolle;
 
-    @Render
     private double gehalt;
 
     public Mitarbeiter(@NonNull String namenskuerzel, @NonNull String name, String rolle, double gehalt) {
+        this(namenskuerzel, name, Rolle.valueOf(rolle), gehalt);
+    }
+
+    public Mitarbeiter(@NonNull String namenskuerzel, @NonNull String name,@NonNull Rolle rolle,@NonNull Double gehalt) {
         this.namenskuerzel = namenskuerzel;
         this.name = name;
-        this.rolle = Rolle.valueOf(rolle);
+        this.rolle = rolle;
         this.gehalt = gehalt;
     }
 
