@@ -12,6 +12,7 @@ import javafx.scene.input.MouseButton;
 import lombok.SneakyThrows;
 import persistence.JdbcProduktRepository;
 import persistence.ProduktRepository;
+import presentation.controller.update.UpdateController;
 import utils.ConnectionManager;
 
 import java.net.URL;
@@ -19,7 +20,7 @@ import java.sql.SQLException;
 import java.util.Collection;
 import java.util.ResourceBundle;
 
-public class ProduktController implements Initializable {
+public class ProduktController implements Initializable, PersistableController {
 
     @FXML
     private TableView<Produkt> produktTable;
@@ -42,7 +43,6 @@ public class ProduktController implements Initializable {
     public void initialize(URL url, ResourceBundle resourceBundle) {
         var connection = ConnectionManager.getConnection();
         produktRepository = JdbcProduktRepository.getInstance(connection);
-//        editController = new UpdateControllerFX<>();
 
         id.setCellValueFactory(new PropertyValueFactory<>("id"));
         holzart.setCellValueFactory(p -> p.getValue().holzartProperty());
@@ -87,8 +87,6 @@ public class ProduktController implements Initializable {
         });
     }
 
-
-
     private void setProduktTable(Collection<Produkt> produkte) {
         var sorted = produkte.stream().sorted().toList();
         var observableList = FXCollections.observableList(sorted);
@@ -96,16 +94,18 @@ public class ProduktController implements Initializable {
         produktTable.refresh();
     }
 
-    public void findAllByAnyString(String value) {
+    @Override
+    public void openNewWindow() {
+
+    }
+
+    @Override
+    public void searchForString(String value) {
         try {
             var allByHolzart = produktRepository.findAllByString(value);
             setProduktTable(allByHolzart);
         } catch (SQLException | IllegalArgumentException e) {
             // ignore
         }
-    }
-
-    public void openNewProduktWindow() {
-
     }
 }

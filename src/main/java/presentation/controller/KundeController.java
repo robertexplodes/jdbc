@@ -11,6 +11,7 @@ import javafx.scene.input.MouseButton;
 import lombok.SneakyThrows;
 import persistence.JdbcKundenRepository;
 import persistence.KundenRepository;
+import presentation.controller.update.UpdateController;
 import utils.ConnectionManager;
 
 import java.net.URL;
@@ -18,7 +19,7 @@ import java.sql.SQLException;
 import java.util.Collection;
 import java.util.ResourceBundle;
 
-public class KundeController implements Initializable {
+public class KundeController implements Initializable, PersistableController {
 
     @FXML
     private TableView<Kunde> kundeTable;
@@ -77,8 +78,14 @@ public class KundeController implements Initializable {
         kundeTable.refresh();
     }
 
+    @Override
+    public void openNewWindow() {
+
+    }
+
     @SneakyThrows
-    public void findAllByAnyString(String value) {
+    @Override
+    public void searchForString(String value) {
         var allByStringInNameOrEmail = kundenRepository.findAllByStringInNameOrEmail(value);
         setKundeTable(allByStringInNameOrEmail);
     }

@@ -14,12 +14,16 @@ import javafx.stage.Stage;
 import lombok.SneakyThrows;
 import persistence.JdbcMitarbeiterRepository;
 import persistence.MitarbeiterRepository;
+import presentation.controller.update.PersitableUpdateControllerManager;
+import presentation.controller.update.UpdateController;
+import presentation.controller.update.UpdateControllerManager;
 import utils.ConnectionManager;
 
 import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
 import java.util.*;
+import java.util.function.Consumer;
 
 public class MitarbeiterController implements Initializable, PersistableController {
 
@@ -40,6 +44,7 @@ public class MitarbeiterController implements Initializable, PersistableControll
 
     private MitarbeiterRepository mitarbeiterRepository;
 
+    private UpdateControllerManager<Mitarbeiter> updateControllerManager;
 
     @SneakyThrows
     @Override
@@ -53,6 +58,8 @@ public class MitarbeiterController implements Initializable, PersistableControll
         rolle.setCellValueFactory(r -> r.getValue().rollenProperty());
 
         setMitarbeiterTable(mitarbeiterRepository.findAll());
+
+        updateControllerManager = new PersitableUpdateControllerManager<>();
 
         mitarbeiterTable.setOnMouseClicked(event -> {
             if (event.getButton() == MouseButton.PRIMARY && event.getClickCount() != 2) {
@@ -72,23 +79,28 @@ public class MitarbeiterController implements Initializable, PersistableControll
             Parent root = loader.load();
             UpdateController<Mitarbeiter> controller = loader.getController();
             controller.setEntity(mitarbeiter);
-            var scene = new Scene(root);
-            Stage stage = new Stage();
-            stage.setScene(scene);
-            stage.setOnCloseRequest(e -> {
-                var value = controller.getValue();
-                value.ifPresent(v -> {
-                    update(v);
-                    loadAll();
-                });
-            });
-            stage.show();
+            Consumer<Mitarbeiter> c = (Mitarbeiter m) -> {
+                update(m);
+                loadAll();
+            };
+            openNewStage(root, controller, c);
         } catch (IOException e) {
             Alert a = new Alert(Alert.AlertType.ERROR);
             a.setTitle("ERROR");
             a.setHeaderText("Could not open new Window!");
             a.show();
         }
+    }
+
+    private void openNewStage(Parent root, UpdateController<Mitarbeiter> controller, Consumer<Mitarbeiter> executeOnCloseRequest) {
+        var scene = new Scene(root);
+        Stage stage = new Stage();
+        stage.setScene(scene);
+        stage.setOnCloseRequest(e -> {
+            var value = controller.getValue();
+            value.ifPresent(executeOnCloseRequest);
+        });
+        stage.show();
     }
 
     private void update(Mitarbeiter v) {
@@ -99,13 +111,28 @@ public class MitarbeiterController implements Initializable, PersistableControll
         }
     }
 
+    private void save(Mitarbeiter v) {
+        try {
+            mitarbeiterRepository.save(v);
+        } catch (SQLException ex) {
+            Alert a = new Alert(Alert.AlertType.ERROR);
+            a.setTitle("ERROR");
+            a.setHeaderText("Could not save Mitarbeiter!");
+            a.show();
+        }
+    }
+
     @SneakyThrows
     @Override
     public void openNewWindow() {
-//        FXMLLoader loader = new FXMLLoader(getClass().getResource("/mitarbeiterEdit.fxml"));
-//        Parent root = loader.load();
-//        UpdateMitarbeiterController controller = loader.getController();
-//        controller.openUpdateWindow()
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/layout/edit/mitarbeiterEdit.fxml"));
+        Parent root = loader.load();
+        UpdateController<Mitarbeiter> controller = loader.getController();
+        Consumer<Mitarbeiter> c = (Mitarbeiter m) -> {
+            save(m);
+            loadAll();
+        };
+        openNewStage(root, controller, c);
     }
 
     @SneakyThrows

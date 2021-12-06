@@ -35,19 +35,10 @@ public class Controller implements Initializable {
     private Button add;
 
     @FXML
-    private Pane mitarbeiterTab;
-
-    @FXML
     private PersistableController mitarbeiterTabController;
 
     @FXML
-    private Pane produktTab;
-
-    @FXML
     private ProduktController produktTabController;
-
-    @FXML
-    private Pane kundenTab;
 
     @FXML
     private KundeController kundenTabController;
@@ -61,15 +52,13 @@ public class Controller implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         connection = ConnectionManager.getConnection();
-
         add.setOnAction(event -> {
             var text = tabpane.getSelectionModel().getSelectedItem().getText();
             if (text.equals("Produkte")) {
-                produktTabController.openNewProduktWindow();
+                produktTabController.openNewWindow();
             } else if("Mitarbeiter".equals(text)){
                 mitarbeiterTabController.openNewWindow();
             }
-
         });
 
         helpAbout.setOnAction(event -> {
@@ -95,8 +84,8 @@ public class Controller implements Initializable {
             String value = searchbar.getText();
 
             mitarbeiterTabController.searchForString(value);
-            produktTabController.findAllByAnyString(value);
-            kundenTabController.findAllByAnyString(value);
+            produktTabController.searchForString(value);
+            kundenTabController.searchForString(value);
         });
 
 

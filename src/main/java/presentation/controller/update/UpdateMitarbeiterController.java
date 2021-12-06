@@ -1,4 +1,4 @@
-package presentation.controller;
+package presentation.controller.update;
 
 import domain.Mitarbeiter;
 import domain.Rolle;
@@ -35,18 +35,25 @@ public class UpdateMitarbeiterController implements UpdateController<Mitarbeiter
 
     @Override
     public Optional<Mitarbeiter> getValue() {
-        double newGehalt;
+        if (namenskuerzel.getText().isEmpty() || name.getText().isEmpty() || gehalt.getText().isEmpty()) {
+            showError("Bitte füllen Sie alle Felder aus!");
+            return Optional.empty();
+        }
         try {
-            newGehalt = Double.parseDouble(gehalt.getText());
+            double newGehalt = Double.parseDouble(gehalt.getText());
             var m = new Mitarbeiter(namenskuerzel.getText(), name.getText(), rolle.getValue(), newGehalt);
             return Optional.of(m);
         } catch (NumberFormatException e) {
-            Alert a = new Alert(Alert.AlertType.ERROR);
-            a.setTitle("ERROR");
-            a.setHeaderText("Gehalt nicht korrekt!");
-            a.showAndWait();
+            showError("Bitte geben Sie eine Zahl ein");
         }
         return Optional.empty();
+    }
+
+    private void showError(String message) {
+        Alert a = new Alert(Alert.AlertType.ERROR);
+        a.setTitle("ERROR");
+        a.setHeaderText(message);
+        a.showAndWait();
     }
 
     public void setEntity(Mitarbeiter m) {
