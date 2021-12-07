@@ -29,13 +29,6 @@ public class Mitarbeiter implements Persitable, Comparable<Mitarbeiter> {
         this(namenskuerzel, name, Rolle.valueOf(rolle), gehalt);
     }
 
-    public Mitarbeiter(@NonNull String namenskuerzel, @NonNull String name,@NonNull Rolle rolle,@NonNull Double gehalt) {
-        this.namenskuerzel = namenskuerzel;
-        this.name = name;
-        this.rolle = rolle;
-        this.gehalt = gehalt;
-    }
-
     public SimpleObjectProperty<String> rollenProperty() {
         String roleName = rolle.name();
         roleName = roleName.substring(0, 1).toUpperCase() + roleName.substring(1).toLowerCase();

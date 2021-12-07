@@ -124,20 +124,7 @@ class JdbcProduktRepositoryTest {
     }
 
     @Test
-    void findByHolzart_is_empty() throws SQLException {
-        var produkte = List.of(
-                new Produkt(1, Holzart.BIRKE, "Tisch"),
-                new Produkt(2, Holzart.EICHE, "Stuhl"),
-                new Produkt(3, Holzart.EICHE, "Kasten")
-        );
-        for (var produkt : produkte) {
-            produktRepository.save(produkt);
-        }
-        assertTrue(produktRepository.findAllByHolzart(Holzart.KIRSCHE).isEmpty());
-    }
-
-    @Test
-    void findByHolzart_contains_exactly() throws SQLException {
+    void find_by_string() throws SQLException {
         var produkte = List.of(
                 new Produkt(1, Holzart.EICHE, "Tisch"),
                 new Produkt(2, Holzart.EICHE, "Stuhl"),
@@ -146,7 +133,7 @@ class JdbcProduktRepositoryTest {
         for (var produkt : produkte) {
             produktRepository.save(produkt);
         }
-        var actual = produktRepository.findAllByHolzart(Holzart.EICHE);
-        assertEquals(produkte, actual);
+        var actual = produktRepository.findAllByString("Stuhl");
+        assertEquals(produkte.subList(1, 2), actual);
     }
 }

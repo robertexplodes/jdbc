@@ -5,7 +5,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import presentation.controller.Controller;
+import presentation.controller.MainController;
 
 public class App extends Application {
     private FXMLLoader loader;
@@ -22,7 +22,7 @@ public class App extends Application {
 
     @Override
     public void stop() throws Exception {
-        Controller controller = loader.getController();
+        MainController controller = loader.getController();
         controller.closeDB();
     }
 }

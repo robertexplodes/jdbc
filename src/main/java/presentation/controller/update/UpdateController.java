@@ -1,12 +1,16 @@
 package presentation.controller.update;
 
 
-import java.util.Optional;
+import domain.interfaces.Persitable;
 
-public interface UpdateController<T> {
+import java.util.Optional;
+import java.util.function.Consumer;
+
+public interface UpdateController<T extends Persitable> {
 
     Optional<T> getValue();
 
     void setEntity(T entity);
 
+    void setOnSave(Consumer<T> onSave);
 }

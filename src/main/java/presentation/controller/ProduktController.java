@@ -12,6 +12,7 @@ import javafx.scene.input.MouseButton;
 import lombok.SneakyThrows;
 import persistence.JdbcProduktRepository;
 import persistence.ProduktRepository;
+import presentation.controller.update.PersitableUpdateControllerManager;
 import presentation.controller.update.UpdateController;
 import utils.ConnectionManager;
 
@@ -50,8 +51,9 @@ public class ProduktController implements Initializable, PersistableController {
 
         setProduktTable(produktRepository.findAll());
 
+
         produktTable.setOnMouseClicked(event -> {
-            if (event.getButton() == MouseButton.PRIMARY && event.getClickCount() != 2) {
+            if (event.getButton() != MouseButton.PRIMARY || event.getClickCount() != 2) {
                 return;
             }
             var produkt = produktTable.getSelectionModel().getSelectedItem();

@@ -3,9 +3,9 @@ package presentation.controller.update;
 import domain.interfaces.Persitable;
 import javafx.scene.Parent;
 
+import java.util.function.Consumer;
+
 public interface UpdateControllerManager<T extends Persitable> {
 
-    UpdateController<T> getUpdateController(String resource);
-
-    Parent getParentForResource(String resource);
+    void executeNewStage(Parent root, UpdateController<T> controller, Consumer<T> consumer);
 }

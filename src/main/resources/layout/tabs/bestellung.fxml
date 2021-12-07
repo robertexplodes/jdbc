@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.Pane?>
+
+<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="772.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="presentation.controller.BestellungController">
+   <children>
+      <TableView fx:id="bestellungTable" prefHeight="400.0" prefWidth="772.0">
+         <columns>
+            <TableColumn fx:id="id" prefWidth="98.4000244140625" resizable="false" sortable="false" text="Id" />
+            <TableColumn fx:id="date" prefWidth="153.5999984741211" resizable="false" sortable="false" text="Datum" />
+            <TableColumn fx:id="kundenName" prefWidth="365.6000061035156" resizable="false" sortable="false" text="Kundenname" />
+            <TableColumn fx:id="mitarbeiter" prefWidth="152.79998779296875" sortable="false" text="Mitarbeiter" />
+         </columns>
+      </TableView>
+   </children>
+</Pane>

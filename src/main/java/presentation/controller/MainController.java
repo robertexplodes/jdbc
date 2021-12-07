@@ -9,7 +9,6 @@ import javafx.scene.control.Button;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.Pane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import lombok.SneakyThrows;
@@ -23,7 +22,7 @@ import java.sql.Connection;
 import java.util.*;
 
 
-public class Controller implements Initializable {
+public class MainController implements Initializable {
 
     @FXML
     private TabPane tabpane;
@@ -44,6 +43,9 @@ public class Controller implements Initializable {
     private KundeController kundenTabController;
 
     @FXML
+    private PersistableController bestellungTabController;
+
+    @FXML
     private TextField searchbar;
 
     private Connection connection;
@@ -58,6 +60,8 @@ public class Controller implements Initializable {
                 produktTabController.openNewWindow();
             } else if("Mitarbeiter".equals(text)){
                 mitarbeiterTabController.openNewWindow();
+            } else if("Kunden".equals(text)){
+                kundenTabController.openNewWindow();
             }
         });
 
@@ -87,8 +91,6 @@ public class Controller implements Initializable {
             produktTabController.searchForString(value);
             kundenTabController.searchForString(value);
         });
-
-
     }
 
     @SneakyThrows

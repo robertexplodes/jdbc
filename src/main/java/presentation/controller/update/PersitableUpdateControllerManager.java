@@ -1,24 +1,22 @@
 package presentation.controller.update;
 
 import domain.interfaces.Persitable;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
-import lombok.SneakyThrows;
+import javafx.scene.Scene;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
+
+import java.util.function.Consumer;
 
 public class PersitableUpdateControllerManager<T extends Persitable> implements UpdateControllerManager<T> {
 
-    @SneakyThrows
     @Override
-    public UpdateController<T> getUpdateController(String resource) {
-        var loader = new FXMLLoader(getClass().getResource(resource));
-        loader.load();
-        return loader.getController();
-    }
-
-    @SneakyThrows
-    @Override
-    public Parent getParentForResource(String resource) {
-        var loader = new FXMLLoader(getClass().getResource(resource));
-        return loader.load();
+    public void executeNewStage(Parent root, UpdateController<T> controller, Consumer<T> executeOnSave) {
+        var scene = new Scene(root);
+        Stage stage = new Stage();
+        stage.setScene(scene);
+        controller.setOnSave(executeOnSave);
+        stage.initModality(Modality.APPLICATION_MODAL);
+        stage.show();
     }
 }

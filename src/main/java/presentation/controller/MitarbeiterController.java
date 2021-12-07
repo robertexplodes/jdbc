@@ -9,6 +9,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
 import javafx.stage.Stage;
 import lombok.SneakyThrows;
@@ -58,11 +59,10 @@ public class MitarbeiterController implements Initializable, PersistableControll
         rolle.setCellValueFactory(r -> r.getValue().rollenProperty());
 
         setMitarbeiterTable(mitarbeiterRepository.findAll());
-
         updateControllerManager = new PersitableUpdateControllerManager<>();
 
         mitarbeiterTable.setOnMouseClicked(event -> {
-            if (event.getButton() == MouseButton.PRIMARY && event.getClickCount() != 2) {
+            if (event.getButton() != MouseButton.PRIMARY || event.getClickCount() != 2) {
                 return;
             }
             var mitarbeiter = mitarbeiterTable.getSelectionModel().getSelectedItem();
@@ -70,6 +70,22 @@ public class MitarbeiterController implements Initializable, PersistableControll
                 return;
             }
             handleEdit(mitarbeiter);
+        });
+
+        mitarbeiterTable.setOnKeyPressed(event -> {
+            if (event.getCode() != KeyCode.DELETE) {
+                return;
+            }
+            var selectedItem = mitarbeiterTable.getSelectionModel().getSelectedItem();
+            if(selectedItem == null) {
+                return;
+            }
+            try {
+                mitarbeiterRepository.delete(selectedItem);
+                setMitarbeiterTable(mitarbeiterRepository.findAll());
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         });
     }
 
@@ -79,28 +95,17 @@ public class MitarbeiterController implements Initializable, PersistableControll
             Parent root = loader.load();
             UpdateController<Mitarbeiter> controller = loader.getController();
             controller.setEntity(mitarbeiter);
-            Consumer<Mitarbeiter> c = (Mitarbeiter m) -> {
+            Consumer<Mitarbeiter> updateMitarbeiter = m -> {
                 update(m);
                 loadAll();
             };
-            openNewStage(root, controller, c);
+            updateControllerManager.executeNewStage(root, controller, updateMitarbeiter);
         } catch (IOException e) {
             Alert a = new Alert(Alert.AlertType.ERROR);
             a.setTitle("ERROR");
             a.setHeaderText("Could not open new Window!");
             a.show();
         }
-    }
-
-    private void openNewStage(Parent root, UpdateController<Mitarbeiter> controller, Consumer<Mitarbeiter> executeOnCloseRequest) {
-        var scene = new Scene(root);
-        Stage stage = new Stage();
-        stage.setScene(scene);
-        stage.setOnCloseRequest(e -> {
-            var value = controller.getValue();
-            value.ifPresent(executeOnCloseRequest);
-        });
-        stage.show();
     }
 
     private void update(Mitarbeiter v) {
@@ -128,11 +133,12 @@ public class MitarbeiterController implements Initializable, PersistableControll
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/layout/edit/mitarbeiterEdit.fxml"));
         Parent root = loader.load();
         UpdateController<Mitarbeiter> controller = loader.getController();
+
         Consumer<Mitarbeiter> c = (Mitarbeiter m) -> {
             save(m);
             loadAll();
         };
-        openNewStage(root, controller, c);
+        updateControllerManager.executeNewStage(root, controller, c);
     }
 
     @SneakyThrows

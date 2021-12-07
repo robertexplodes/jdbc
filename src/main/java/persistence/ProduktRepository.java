@@ -8,8 +8,6 @@ import java.util.List;
 
 public interface ProduktRepository extends Repository<Integer, Produkt> {
 
-    List<Produkt> findAllByHolzart(Holzart holzart) throws SQLException;
-
     /**
      * Finds all entities which contain the given value in their Holzart or Produktart
      * @param value

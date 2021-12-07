@@ -14,6 +14,7 @@ import javafx.stage.WindowEvent;
 import java.net.URL;
 import java.util.Optional;
 import java.util.ResourceBundle;
+import java.util.function.Consumer;
 
 public class UpdateMitarbeiterController implements UpdateController<Mitarbeiter>, Initializable {
 
@@ -35,18 +36,13 @@ public class UpdateMitarbeiterController implements UpdateController<Mitarbeiter
 
     @Override
     public Optional<Mitarbeiter> getValue() {
-        if (namenskuerzel.getText().isEmpty() || name.getText().isEmpty() || gehalt.getText().isEmpty()) {
-            showError("Bitte füllen Sie alle Felder aus!");
-            return Optional.empty();
-        }
         try {
             double newGehalt = Double.parseDouble(gehalt.getText());
             var m = new Mitarbeiter(namenskuerzel.getText(), name.getText(), rolle.getValue(), newGehalt);
             return Optional.of(m);
         } catch (NumberFormatException e) {
-            showError("Bitte geben Sie eine Zahl ein");
+            return Optional.empty();
         }
-        return Optional.empty();
     }
 
     private void showError(String message) {
@@ -65,12 +61,24 @@ public class UpdateMitarbeiterController implements UpdateController<Mitarbeiter
     }
 
     @Override
+    public void setOnSave(Consumer<Mitarbeiter> onSave) {
+        save.setOnAction(event -> {
+            var value = getValue();
+            if (getValue().isPresent()) {
+                value.ifPresent(onSave);
+                Stage stage = (Stage) save.getScene().getWindow();
+                stage.close();
+            } else {
+                showError("Bitte alle Felder ausfüllen!");
+            }
+        });
+    }
+
+    @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         rolle.getItems().addAll(Rolle.values());
-        save.setOnAction(e -> {
+        save.setOnAction(event -> {
 
-            var stage = (Stage) rolle.getScene().getWindow();
-            stage.fireEvent(new WindowEvent(stage, WindowEvent.WINDOW_CLOSE_REQUEST));
         });
     }
 }

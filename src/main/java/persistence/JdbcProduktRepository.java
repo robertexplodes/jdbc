@@ -41,24 +41,6 @@ public class JdbcProduktRepository implements ProduktRepository {
     }
 
     @Override
-    public List<Produkt> findAllByHolzart(Holzart holzart) throws SQLException {
-        var sql = """
-                SELECT produkttyp_id, produktart, holzart
-                FROM produkttypen
-                WHERE holzart = ?
-                """;
-        try (var statement = connection.prepareStatement(sql)) {
-            statement.setString(1, holzart.name());
-            var resultSet = statement.executeQuery();
-            var produkte = new ArrayList<Produkt>();
-            while (resultSet.next()) {
-                produktOfResultSet(resultSet).ifPresent(produkte::add);
-            }
-            return produkte;
-        }
-    }
-
-    @Override
     public List<Produkt> findAllByString(String value) throws SQLException{
         value = value.toUpperCase();
         var sql = """
