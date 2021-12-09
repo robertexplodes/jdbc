@@ -3,6 +3,7 @@ package presentation.controller.update;
 import domain.Kunde;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
@@ -55,7 +56,10 @@ public class UpdateKundeController implements Initializable, UpdateController<Ku
                 onSave.accept(value.get());
                 ((Stage) save.getScene().getWindow()).close();
             } else {
-                System.err.println("alert");
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Error");
+                alert.setHeaderText("Could not save Object");
+                alert.show();
             }
         });
     }
@@ -63,10 +67,5 @@ public class UpdateKundeController implements Initializable, UpdateController<Ku
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         id.setEditable(false);
-        save.setOnAction(event -> {
-            if (getValue().isPresent()) {
-
-            }
-        });
     }
 }
