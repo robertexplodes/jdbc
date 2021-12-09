@@ -3,16 +3,13 @@ package presentation.controller;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.Group;
 import javafx.scene.Scene;
-import javafx.scene.control.*;
 import javafx.scene.control.Button;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.TabPane;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
-import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
-import javafx.scene.layout.StackPane;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.MediaView;
@@ -21,12 +18,11 @@ import javafx.stage.WindowEvent;
 import lombok.SneakyThrows;
 import utils.ConnectionManager;
 
-import javax.swing.event.HyperlinkEvent;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.sql.Connection;
-import java.util.*;
+import java.util.Objects;
+import java.util.ResourceBundle;
 
 
 public class MainController implements Initializable {
@@ -58,12 +54,10 @@ public class MainController implements Initializable {
     @FXML
     private TextField searchbar;
 
-    private Connection connection;
 
     @SneakyThrows
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        connection = ConnectionManager.getConnection();
         tabpane.getSelectionModel().selectedIndexProperty().addListener(i -> {
             var index = tabpane.getSelectionModel().getSelectedIndex();
             var tab = tabpane.getTabs().get(index);
@@ -78,7 +72,6 @@ public class MainController implements Initializable {
         add.setOnAction(event -> {
             var text = tabpane.getSelectionModel().getSelectedItem().getText();
             switch (text) {
-                case "Produkte" -> produktTabController.openNewWindow();
                 case "Mitarbeiter" -> mitarbeiterTabController.openNewWindow();
                 case "Kunde" -> kundenTabController.openNewWindow();
                 default -> throw new IllegalArgumentException();
@@ -93,7 +86,7 @@ public class MainController implements Initializable {
         });
 
         helpAbout.setOnAction(event -> {
-            URI path = null;
+            URI path;
             try {
                 path = Objects.requireNonNull(getClass().getResource("/about.mp4")).toURI();
             } catch (URISyntaxException e) {

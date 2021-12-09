@@ -20,7 +20,7 @@ public class Kunde implements Persitable, Comparable<Kunde> {
     public Kunde(Integer id, @NonNull String name, @NonNull String email) {
         this.id = id;
         this.name = name;
-        var emailRegex = "^[\\w-\\+]+(\\.[\\w]+)*@[\\w-]+(\\.[\\w]+)*(\\.[a-z]{2,})$";
+        var emailRegex = "^(.+)@(.+)$";
         if(!email.matches(emailRegex)) {
             throw new IllegalArgumentException("Email is not valid " + email);
         }

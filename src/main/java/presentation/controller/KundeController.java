@@ -1,7 +1,6 @@
 package presentation.controller;
 
 import domain.Kunde;
-import domain.Mitarbeiter;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -51,7 +50,6 @@ public class KundeController implements Initializable, PersistableController {
     public void initialize(URL url, ResourceBundle resourceBundle) {
         var connection = ConnectionManager.getConnection();
         kundenRepository = JdbcKundenRepository.getInstance(connection);
-//        editController = new UpdateControllerFX<>();
         id.setCellValueFactory(new PropertyValueFactory<>("id"));
         name.setCellValueFactory(new PropertyValueFactory<>("name"));
         email.setCellValueFactory(new PropertyValueFactory<>("email"));
@@ -124,7 +122,7 @@ public class KundeController implements Initializable, PersistableController {
         var loader = new FXMLLoader(getClass().getResource("/layout/edit/kundeEdit.fxml"));
         Parent root = loader.load();
         UpdateController<Kunde> editController = loader.getController();
-        Consumer<Kunde> save = (k) -> {
+        Consumer<Kunde> save = k -> {
             save(k);
             loadAll();
         };

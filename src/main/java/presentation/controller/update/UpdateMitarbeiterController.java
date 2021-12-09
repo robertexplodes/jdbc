@@ -9,7 +9,6 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
-import javafx.stage.WindowEvent;
 
 import java.net.URL;
 import java.util.Optional;
@@ -45,10 +44,10 @@ public class UpdateMitarbeiterController implements UpdateController<Mitarbeiter
         }
     }
 
-    private void showError(String message) {
+    private void showError() {
         Alert a = new Alert(Alert.AlertType.ERROR);
         a.setTitle("ERROR");
-        a.setHeaderText(message);
+        a.setHeaderText("Bitte alle Felder ausfüllen!");
         a.showAndWait();
     }
 
@@ -69,7 +68,7 @@ public class UpdateMitarbeiterController implements UpdateController<Mitarbeiter
                 Stage stage = (Stage) save.getScene().getWindow();
                 stage.close();
             } else {
-                showError("Bitte alle Felder ausfüllen!");
+                showError();
             }
         });
     }

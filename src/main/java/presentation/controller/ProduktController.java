@@ -7,13 +7,9 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.MouseButton;
 import lombok.SneakyThrows;
 import persistence.JdbcProduktRepository;
 import persistence.ProduktRepository;
-import presentation.controller.update.PersitableUpdateControllerManager;
-import presentation.controller.update.UpdateController;
 import utils.ConnectionManager;
 
 import java.net.URL;
@@ -21,7 +17,7 @@ import java.sql.SQLException;
 import java.util.Collection;
 import java.util.ResourceBundle;
 
-public class ProduktController implements Initializable, PersistableController {
+public class ProduktController implements Initializable, PersistableSearchController {
 
     @FXML
     private TableView<Produkt> produktTable;
@@ -37,8 +33,6 @@ public class ProduktController implements Initializable, PersistableController {
 
     private ProduktRepository produktRepository;
 
-    private UpdateController<Produkt> editController;
-
     @SneakyThrows
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -51,21 +45,6 @@ public class ProduktController implements Initializable, PersistableController {
 
         setProduktTable(produktRepository.findAll());
 
-//        produktTable.setOnKeyPressed(event -> {
-//            if (event.getCode() != KeyCode.DELETE) {
-//                return;
-//            }
-//            var selectedItem = produktTable.getSelectionModel().getSelectedItem();
-//            if(selectedItem == null) {
-//                return;
-//            }
-//            try {
-//                produktRepository.delete(selectedItem);
-//                setProduktTable(produktRepository.findAll());
-//            } catch (SQLException e) {
-//                e.printStackTrace();
-//            }
-//        });
     }
 
     private void setProduktTable(Collection<Produkt> produkte) {
@@ -73,11 +52,6 @@ public class ProduktController implements Initializable, PersistableController {
         var observableList = FXCollections.observableList(sorted);
         produktTable.setItems(observableList);
         produktTable.refresh();
-    }
-
-    @Override
-    public void openNewWindow() {
-
     }
 
     @Override

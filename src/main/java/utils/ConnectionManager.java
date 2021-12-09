@@ -8,6 +8,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.HashMap;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class ConnectionManager {
@@ -22,7 +23,7 @@ public class ConnectionManager {
             return connection;
         String file = "/database.conf";
         var url = ConnectionManager.class.getResource(file);
-        var path = Path.of(url.toURI());
+        var path = Path.of(Objects.requireNonNull(url).toURI());
         try (var lines = Files.lines(path)) {
             var values = lines.map(l -> l.split("="))
                     .collect(Collectors.toMap(

@@ -1,10 +1,7 @@
 package presentation.controller;
 
-public interface PersistableController {
+public interface PersistableController extends PersistableSearchController {
 
     void openNewWindow();
 
-    void searchForString(String value);
-
-    void loadAll();
 }

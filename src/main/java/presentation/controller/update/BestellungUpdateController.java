@@ -1,28 +1,23 @@
 package presentation.controller.update;
 
 import domain.Bestellung;
-import domain.Mitarbeiter;
 import domain.Produkt;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.*;
+import javafx.scene.control.Label;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import lombok.SneakyThrows;
-import persistence.BestellungRepository;
 import persistence.JdbcBestellungRepository;
 import presentation.controller.DetailController;
 import utils.ConnectionManager;
 
 import java.net.URL;
-import java.util.Optional;
 import java.util.ResourceBundle;
-import java.util.function.Consumer;
 
 public class BestellungUpdateController implements Initializable, DetailController<Bestellung> {
-
-    @FXML
-    private Button save;
 
     @FXML
     private Label id;
@@ -51,7 +46,6 @@ public class BestellungUpdateController implements Initializable, DetailControll
         produktart.setCellValueFactory(new PropertyValueFactory<>("produktart"));
     }
 
-    private BestellungRepository bestellungRepository;
 
     @SneakyThrows
     @Override
@@ -61,13 +55,12 @@ public class BestellungUpdateController implements Initializable, DetailControll
         kundenName.setText(entity.getKunde().getName());
 
         var connection = ConnectionManager.getConnection();
-        bestellungRepository = JdbcBestellungRepository.getInstance(connection);
+        var bestellungRepository = JdbcBestellungRepository.getInstance(connection);
 
         var produkteInBestellung = bestellungRepository.findAllProdukteInBestellung(entity);
 
         anzahl.setCellValueFactory(p ->  new SimpleObjectProperty<>(produkteInBestellung.get(p.getValue())));
 
         produkteInBestellung.forEach((key, value) -> produkte.getItems().add(key));
-
     }
 }

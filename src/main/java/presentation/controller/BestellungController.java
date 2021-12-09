@@ -18,18 +18,15 @@ import javafx.stage.Stage;
 import lombok.SneakyThrows;
 import persistence.BestellungRepository;
 import persistence.JdbcBestellungRepository;
-import presentation.controller.update.PersitableUpdateControllerManager;
-import presentation.controller.update.UpdateControllerManager;
 import utils.ConnectionManager;
 
 import java.io.IOException;
 import java.net.URL;
-
 import java.time.LocalDate;
 import java.util.List;
 import java.util.ResourceBundle;
 
-public class BestellungController implements Initializable, PersistableController {
+public class BestellungController implements Initializable, PersistableSearchController {
     @FXML
     private TableView<Bestellung> bestellungTable;
 
@@ -90,11 +87,6 @@ public class BestellungController implements Initializable, PersistableControlle
     }
 
     @SneakyThrows
-    private void update(Bestellung bestellung) {
-        bestellungRepository.update(bestellung);
-    }
-
-    @SneakyThrows
     @Override
     public void loadAll() {
         setBestellungTable(bestellungRepository.findAll());
@@ -104,11 +96,6 @@ public class BestellungController implements Initializable, PersistableControlle
         var observableList = FXCollections.observableList(bestellungen);
         bestellungTable.getItems().clear();
         bestellungTable.setItems(observableList);
-    }
-
-    @Override
-    public void openNewWindow() {
-
     }
 
     @SneakyThrows
