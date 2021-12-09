@@ -47,6 +47,12 @@
             <version>1.4.200</version>
             <scope>test</scope>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/org.openjfx/javafx-media -->
+        <dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-media</artifactId>
+            <version>${javaFxVersion}</version>
+        </dependency>
 
         <dependency>
             <groupId>org.junit.jupiter</groupId>

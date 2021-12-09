@@ -44,10 +44,7 @@ public class BestellungUpdateController implements Initializable, UpdateControll
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        anzahl.setCellValueFactory(p -> {
-
-            return new SimpleObjectProperty<>();
-        });
+        anzahl.setCellValueFactory(p -> new SimpleObjectProperty<>());
     }
 
     @Override
