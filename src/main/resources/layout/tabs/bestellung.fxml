@@ -11,7 +11,6 @@
             <TableColumn fx:id="id" prefWidth="98.4000244140625" resizable="false" sortable="false" text="Id" />
             <TableColumn fx:id="date" prefWidth="153.5999984741211" resizable="false" sortable="false" text="Datum" />
             <TableColumn fx:id="kundenName" prefWidth="365.6000061035156" resizable="false" sortable="false" text="Kundenname" />
-            <TableColumn fx:id="mitarbeiter" prefWidth="152.79998779296875" sortable="false" text="Mitarbeiter" />
          </columns>
       </TableView>
    </children>

@@ -98,3 +98,12 @@ values (1, 2, 3);
 
 insert into BestellungsInhalt (bestellnummer, produkttyp, amount)
 values (2, 1, 3);
+
+insert into BestellungsInhalt (bestellnummer, produkttyp, amount)
+values (5, 1, 3);
+
+insert into BestellungsInhalt (bestellnummer, produkttyp, amount)
+values (4, 2, 1);
+
+insert into BestellungsInhalt (bestellnummer, produkttyp, amount)
+values (3, 4, 3);

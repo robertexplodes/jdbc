@@ -51,42 +51,21 @@ public class ProduktController implements Initializable, PersistableController {
 
         setProduktTable(produktRepository.findAll());
 
-
-        produktTable.setOnMouseClicked(event -> {
-            if (event.getButton() != MouseButton.PRIMARY || event.getClickCount() != 2) {
-                return;
-            }
-            var produkt = produktTable.getSelectionModel().getSelectedItem();
-            if (produkt == null) {
-                return;
-            }
-            var newValue = editController.getValue();
-            if (newValue.isEmpty()) {
-                return;
-            }
-            try {
-                produktRepository.update(newValue.get());
-                setProduktTable(produktRepository.findAll());
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-        });
-
-        produktTable.setOnKeyPressed(event -> {
-            if (event.getCode() != KeyCode.DELETE) {
-                return;
-            }
-            var selectedItem = produktTable.getSelectionModel().getSelectedItem();
-            if(selectedItem == null) {
-                return;
-            }
-            try {
-                produktRepository.delete(selectedItem);
-                setProduktTable(produktRepository.findAll());
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-        });
+//        produktTable.setOnKeyPressed(event -> {
+//            if (event.getCode() != KeyCode.DELETE) {
+//                return;
+//            }
+//            var selectedItem = produktTable.getSelectionModel().getSelectedItem();
+//            if(selectedItem == null) {
+//                return;
+//            }
+//            try {
+//                produktRepository.delete(selectedItem);
+//                setProduktTable(produktRepository.findAll());
+//            } catch (SQLException e) {
+//                e.printStackTrace();
+//            }
+//        });
     }
 
     private void setProduktTable(Collection<Produkt> produkte) {
@@ -109,5 +88,11 @@ public class ProduktController implements Initializable, PersistableController {
         } catch (SQLException | IllegalArgumentException e) {
             // ignore
         }
+    }
+
+    @SneakyThrows
+    @Override
+    public void loadAll() {
+        setProduktTable(produktRepository.findAll());
     }
 }

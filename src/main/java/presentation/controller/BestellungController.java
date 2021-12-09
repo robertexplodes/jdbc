@@ -1,24 +1,24 @@
 package presentation.controller;
 
 import domain.Bestellung;
-import domain.Mitarbeiter;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseButton;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 import lombok.SneakyThrows;
 import persistence.BestellungRepository;
 import persistence.JdbcBestellungRepository;
-import presentation.controller.update.BestellungUpdateController;
 import presentation.controller.update.PersitableUpdateControllerManager;
-import presentation.controller.update.UpdateController;
 import presentation.controller.update.UpdateControllerManager;
 import utils.ConnectionManager;
 
@@ -28,7 +28,6 @@ import java.net.URL;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.ResourceBundle;
-import java.util.function.Consumer;
 
 public class BestellungController implements Initializable, PersistableController {
     @FXML
@@ -43,12 +42,8 @@ public class BestellungController implements Initializable, PersistableControlle
     @FXML
     private TableColumn<Bestellung, String> kundenName;
 
-    @FXML
-    private TableColumn<Bestellung, String> mitarbeiter;
-
     private BestellungRepository bestellungRepository;
 
-    private UpdateControllerManager<Bestellung> updateControllerManager;
 
     @SneakyThrows
     @Override
@@ -56,21 +51,11 @@ public class BestellungController implements Initializable, PersistableControlle
         var connection = ConnectionManager.getConnection();
         bestellungRepository = JdbcBestellungRepository.getInstance(connection);
 
-        updateControllerManager = new PersitableUpdateControllerManager<>();
-
         id.setCellValueFactory(new PropertyValueFactory<>("bestellungId"));
         date.setCellValueFactory(new PropertyValueFactory<>("bestellDatum"));
         kundenName.setCellValueFactory(k -> {
             var name = k.getValue().getKunde().getName();
             return new SimpleObjectProperty<>(name);
-        });
-        mitarbeiter.setCellValueFactory(k -> {
-            var mitarbeiter = k.getValue().getMitarbeiter();
-            if (mitarbeiter == null) {
-                return new SimpleObjectProperty<>("");
-            }
-            var namenskuerzel = mitarbeiter.getNamenskuerzel();
-            return new SimpleObjectProperty<>(namenskuerzel);
         });
         setBestellungTable(bestellungRepository.findAll());
         bestellungTable.setOnMouseClicked(event -> {
@@ -78,24 +63,24 @@ public class BestellungController implements Initializable, PersistableControlle
                 return;
             }
             var bestellung = bestellungTable.getSelectionModel().getSelectedItem();
-            if (mitarbeiter == null) {
+            if (bestellung == null) {
                 return;
             }
-            handleEdit(bestellung);
+            handleDetails(bestellung);
         });
     }
 
-    private void handleEdit(Bestellung bestellung) {
+    private void handleDetails(Bestellung bestellung) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/layout/edit/bestellungEdit.fxml"));
             Parent root = loader.load();
-            UpdateController<Bestellung> controller = loader.getController();
+            DetailController<Bestellung> controller = loader.getController();
             controller.setEntity(bestellung);
-            Consumer<Bestellung> updateMitarbeiter = m -> {
-                update(m);
-                loadAll();
-            };
-            updateControllerManager.executeNewStage(root, controller, updateMitarbeiter);
+            var scene = new Scene(root);
+            Stage stage = new Stage();
+            stage.setScene(scene);
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.show();
         } catch (IOException e) {
             Alert a = new Alert(Alert.AlertType.ERROR);
             a.setTitle("ERROR");
@@ -110,12 +95,14 @@ public class BestellungController implements Initializable, PersistableControlle
     }
 
     @SneakyThrows
-    private void loadAll() {
+    @Override
+    public void loadAll() {
         setBestellungTable(bestellungRepository.findAll());
     }
 
     private void setBestellungTable(List<Bestellung> bestellungen) {
         var observableList = FXCollections.observableList(bestellungen);
+        bestellungTable.getItems().clear();
         bestellungTable.setItems(observableList);
     }
 
@@ -124,8 +111,10 @@ public class BestellungController implements Initializable, PersistableControlle
 
     }
 
+    @SneakyThrows
     @Override
     public void searchForString(String value) {
-
+        var byName = bestellungRepository.findAllByString(value);
+        setBestellungTable(byName);
     }
 }

@@ -1,5 +1,6 @@
 package presentation.controller;
 
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Group;
@@ -8,6 +9,7 @@ import javafx.scene.control.*;
 import javafx.scene.control.Button;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextField;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
@@ -15,9 +17,11 @@ import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.MediaView;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 import lombok.SneakyThrows;
 import utils.ConnectionManager;
 
+import javax.swing.event.HyperlinkEvent;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -32,6 +36,9 @@ public class MainController implements Initializable {
 
     @FXML
     private MenuItem helpAbout;
+
+    @FXML
+    private MenuItem reload;
 
     @FXML
     private Button add;
@@ -57,21 +64,38 @@ public class MainController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         connection = ConnectionManager.getConnection();
+        tabpane.getSelectionModel().selectedIndexProperty().addListener(i -> {
+            var index = tabpane.getSelectionModel().getSelectedIndex();
+            var tab = tabpane.getTabs().get(index);
+            var text = tab.getText();
+
+            switch (text) {
+                case "Produkte", "Bestellungen" -> Platform.runLater(()->add.setVisible(false));
+                case "Mitarbeiter", "Kunde" -> Platform.runLater(() -> add.setVisible(true));
+                default -> throw new IllegalArgumentException();
+            }
+        });
         add.setOnAction(event -> {
             var text = tabpane.getSelectionModel().getSelectedItem().getText();
-            if (text.equals("Produkte")) {
-                produktTabController.openNewWindow();
-            } else if ("Mitarbeiter".equals(text)) {
-                mitarbeiterTabController.openNewWindow();
-            } else if ("Kunden".equals(text)) {
-                kundenTabController.openNewWindow();
+            switch (text) {
+                case "Produkte" -> produktTabController.openNewWindow();
+                case "Mitarbeiter" -> mitarbeiterTabController.openNewWindow();
+                case "Kunde" -> kundenTabController.openNewWindow();
+                default -> throw new IllegalArgumentException();
             }
+        });
+
+        reload.setOnAction(event -> {
+            mitarbeiterTabController.loadAll();
+            produktTabController.loadAll();
+            kundenTabController.loadAll();
+            bestellungTabController.loadAll();
         });
 
         helpAbout.setOnAction(event -> {
             URI path = null;
             try {
-                path = getClass().getResource("/about.mp4").toURI();
+                path = Objects.requireNonNull(getClass().getResource("/about.mp4")).toURI();
             } catch (URISyntaxException e) {
                 return;
             }
@@ -85,6 +109,11 @@ public class MainController implements Initializable {
             var scene = new Scene(pane);
             var stage = new Stage();
             stage.setScene(scene);
+            stage.setOnCloseRequest(e -> player.stop());
+            scene.setOnKeyPressed(keyEvent -> {
+                if (keyEvent.getCode() == KeyCode.ESCAPE)
+                    stage.fireEvent(new WindowEvent(scene.getWindow(), WindowEvent.WINDOW_CLOSE_REQUEST));
+            });
             stage.setFullScreen(true);
             stage.show();
         });
@@ -95,11 +124,12 @@ public class MainController implements Initializable {
             mitarbeiterTabController.searchForString(value);
             produktTabController.searchForString(value);
             kundenTabController.searchForString(value);
+            bestellungTabController.searchForString(value);
         });
     }
 
     @SneakyThrows
     public void closeDB() {
-        connection.close();
+        ConnectionManager.closeConnection();
     }
 }

@@ -7,13 +7,19 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
+import lombok.SneakyThrows;
+import persistence.BestellungRepository;
+import persistence.JdbcBestellungRepository;
+import presentation.controller.DetailController;
+import utils.ConnectionManager;
 
 import java.net.URL;
 import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.function.Consumer;
 
-public class BestellungUpdateController implements Initializable, UpdateController<Bestellung> {
+public class BestellungUpdateController implements Initializable, DetailController<Bestellung> {
 
     @FXML
     private Button save;
@@ -26,9 +32,6 @@ public class BestellungUpdateController implements Initializable, UpdateControll
 
     @FXML
     private Label kundenName;
-
-    @FXML
-    private ChoiceBox<Mitarbeiter> mitarbeiter;
 
     @FXML
     private TableView<Produkt> produkte;
@@ -44,24 +47,27 @@ public class BestellungUpdateController implements Initializable, UpdateControll
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        anzahl.setCellValueFactory(p -> new SimpleObjectProperty<>());
+        holzart.setCellValueFactory(p -> p.getValue().holzartProperty());
+        produktart.setCellValueFactory(new PropertyValueFactory<>("produktart"));
     }
 
-    @Override
-    public Optional<Bestellung> getValue() {
-        return Optional.empty();
-    }
+    private BestellungRepository bestellungRepository;
 
+    @SneakyThrows
     @Override
     public void setEntity(Bestellung entity) {
         id.setText(entity.getBestellungId().toString());
         datum.setText(entity.getBestellDatum().toString());
         kundenName.setText(entity.getKunde().getName());
 
-    }
+        var connection = ConnectionManager.getConnection();
+        bestellungRepository = JdbcBestellungRepository.getInstance(connection);
 
-    @Override
-    public void setOnSave(Consumer<Bestellung> onSave) {
+        var produkteInBestellung = bestellungRepository.findAllProdukteInBestellung(entity);
+
+        anzahl.setCellValueFactory(p ->  new SimpleObjectProperty<>(produkteInBestellung.get(p.getValue())));
+
+        produkteInBestellung.forEach((key, value) -> produkte.getItems().add(key));
 
     }
 }

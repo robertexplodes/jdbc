@@ -11,6 +11,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
 import lombok.SneakyThrows;
 import persistence.JdbcKundenRepository;
@@ -64,10 +65,25 @@ public class KundeController implements Initializable, PersistableController {
                 return;
             }
             var kunde = kundeTable.getSelectionModel().getSelectedItem();
-            if(kunde == null) {
+            if (kunde == null) {
                 return;
             }
             handleEdit(kunde);
+        });
+        kundeTable.setOnKeyPressed(event -> {
+            if (event.getCode() != KeyCode.DELETE) {
+                return;
+            }
+            var selectedItem = kundeTable.getSelectionModel().getSelectedItem();
+            if (selectedItem == null) {
+                return;
+            }
+            try {
+                kundenRepository.delete(selectedItem);
+                setKundeTable(kundenRepository.findAll());
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         });
     }
 

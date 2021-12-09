@@ -6,12 +6,10 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
-import javafx.stage.Stage;
 import lombok.SneakyThrows;
 import persistence.JdbcMitarbeiterRepository;
 import persistence.MitarbeiterRepository;
@@ -149,7 +147,8 @@ public class MitarbeiterController implements Initializable, PersistableControll
     }
 
     @SneakyThrows
-    private void loadAll() {
+    @Override
+    public void loadAll() {
         setMitarbeiterTable(mitarbeiterRepository.findAll());
     }
 

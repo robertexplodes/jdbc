@@ -2,6 +2,7 @@ package presentation.controller.update;
 
 import domain.interfaces.Persitable;
 import javafx.scene.Parent;
+import presentation.controller.DetailController;
 
 import java.util.function.Consumer;
 

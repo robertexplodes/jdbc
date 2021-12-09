@@ -32,6 +32,8 @@ public class UpdateKundeController implements Initializable, UpdateController<Ku
             return Optional.empty();
         }
         try {
+            if(id.getText().isEmpty())
+                return Optional.of(new Kunde(name.getText(), email.getText()));
             return Optional.of(new Kunde(Integer.parseInt(id.getText()), name.getText(), email.getText()));
         } catch (IllegalArgumentException e) {
             return Optional.empty();

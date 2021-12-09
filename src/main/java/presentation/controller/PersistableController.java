@@ -6,4 +6,5 @@ public interface PersistableController {
 
     void searchForString(String value);
 
+    void loadAll();
 }
