@@ -11,7 +11,6 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import lombok.SneakyThrows;
 import persistence.JdbcBestellungRepository;
-import presentation.controller.DetailController;
 import utils.ConnectionManager;
 
 import java.net.URL;

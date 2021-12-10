@@ -18,6 +18,7 @@ import javafx.stage.Stage;
 import lombok.SneakyThrows;
 import persistence.BestellungRepository;
 import persistence.JdbcBestellungRepository;
+import presentation.controller.update.DetailController;
 import utils.ConnectionManager;
 
 import java.io.IOException;
