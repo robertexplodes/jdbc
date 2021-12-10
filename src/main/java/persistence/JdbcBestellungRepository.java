@@ -97,6 +97,25 @@ public class JdbcBestellungRepository implements BestellungRepository {
     }
 
     @Override
+    public List<Bestellung> findAllByString(String value) throws SQLException {
+        var sql = """
+                SELECT k.name, bestellungen.bestellnummer as bestellnummer,bestellungen.bestelldatum as bestelldatum, bestellungen.kunde as kunde, bestellungen.mitarbeiter as mitarbeiter
+                FROM bestellungen
+                inner join kunden k on bestellungen.kunde = k.kunden_id
+                where UPPER(k.name) like ?
+                    """;
+        try (var statement = connection.prepareStatement(sql)) {
+            statement.setString(1, "%" + value.toUpperCase() + "%");
+            var resultSet = statement.executeQuery();
+            var found = new ArrayList<Bestellung>();
+            while (resultSet.next()) {
+                bestellungOfResultSet(resultSet).ifPresent(found::add);
+            }
+            return found;
+        }
+    }
+
+    @Override
     public List<Bestellung> findAll() throws SQLException {
         var sql = """
                 SELECT bestellnummer, bestelldatum, kunde, mitarbeiter

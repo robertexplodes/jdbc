@@ -15,4 +15,6 @@ public interface BestellungRepository extends Repository<Integer, Bestellung> {
     List<Bestellung> findAllByKunde(Kunde kunde) throws SQLException;
 
     void addProdukt(Bestellung bestellung, Produkt produkt, int menge) throws SQLException;
+
+    List<Bestellung> findAllByString(String value) throws SQLException;
 }

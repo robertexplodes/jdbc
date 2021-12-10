@@ -27,4 +27,11 @@ class KundeTest {
     void incorrect_email() {
         assertThrows(IllegalArgumentException.class, () -> new Kunde("Hansi", "adsf"));
     }
+
+    @Test
+    void same_hashCode() {
+        var k1 = new Kunde(1, "Hansi", "asdf@email.com");
+        var k2 = new Kunde(1, "Thomas", "asdf@email.com");
+        assertEquals(k1.hashCode(), k2.hashCode());
+    }
 }

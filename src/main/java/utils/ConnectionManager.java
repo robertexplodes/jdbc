@@ -2,14 +2,13 @@ package utils;
 
 import lombok.SneakyThrows;
 
-import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.HashMap;
-import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class ConnectionManager {
@@ -24,7 +23,7 @@ public class ConnectionManager {
             return connection;
         String file = "/database.conf";
         var url = ConnectionManager.class.getResource(file);
-        var path = Path.of(url.toURI());
+        var path = Path.of(Objects.requireNonNull(url).toURI());
         try (var lines = Files.lines(path)) {
             var values = lines.map(l -> l.split("="))
                     .collect(Collectors.toMap(
@@ -33,10 +32,14 @@ public class ConnectionManager {
                             (v1, v2) -> v1,
                             HashMap::new
                     ));
-            connection = DriverManager.getConnection(values.get("url"), values.get("username"), values.get("password"));
+            connection = DriverManager.getConnection(values.get("url"), values.get("user"), values.get("password"));
         } catch (SQLException e) {
-            throw new IllegalArgumentException("Config file is not valid");
+            throw new IllegalArgumentException("Could not connect to Database. Please check your config file.");
         }
         return connection;
+    }
+
+    public static void closeConnection() throws SQLException {
+        connection.close();
     }
 }

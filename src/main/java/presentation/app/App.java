@@ -5,13 +5,13 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import presentation.controller.Controller;
+import presentation.controller.MainController;
 
 public class App extends Application {
     private FXMLLoader loader;
     @Override
     public void start(Stage stage) throws Exception {
-        loader = new FXMLLoader(getClass().getResource("/app1.fxml"));
+        loader = new FXMLLoader(getClass().getResource("/layout/app.fxml"));
 
         Parent root = loader.load();
 
@@ -22,7 +22,7 @@ public class App extends Application {
 
     @Override
     public void stop() throws Exception {
-        Controller controller = loader.getController();
+        MainController controller = loader.getController();
         controller.closeDB();
     }
 }

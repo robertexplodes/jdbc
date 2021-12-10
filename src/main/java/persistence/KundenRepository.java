@@ -10,4 +10,5 @@ public interface KundenRepository extends Repository<Integer, Kunde> {
 
     List<Bestellung> findAllBestellungen(Kunde kunde) throws SQLException;
 
+    List<Kunde> findAllByStringInNameOrEmail(String value) throws SQLException;
 }

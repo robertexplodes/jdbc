@@ -6,9 +6,7 @@ import lombok.SneakyThrows;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 public class JdbcMitarbeiterRepository implements MitarbeiterRepository {
 
@@ -40,10 +38,10 @@ public class JdbcMitarbeiterRepository implements MitarbeiterRepository {
         var sql = """
                 SELECT namenskuerzel, name, rolle, monatsgehalt
                 FROM mitarbeiter
-                WHERE name LIKE ?
+                WHERE UPPER(name) LIKE ?
                 """;
         try (var statement = connection.prepareStatement(sql)) {
-            String like = "%" + name + "%";
+            String like = "%" + name.toUpperCase() + "%";
             statement.setString(1, like);
             var found = new ArrayList<Mitarbeiter>();
             var resultSet = statement.executeQuery();

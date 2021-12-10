@@ -8,9 +8,7 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 public class JdbcKundenRepository implements KundenRepository {
 
@@ -38,6 +36,26 @@ public class JdbcKundenRepository implements KundenRepository {
     public List<Bestellung> findAllBestellungen(Kunde kunde) throws SQLException {
         var bestellungRepository = JdbcBestellungRepository.getInstance(connection);
         return bestellungRepository.findAllByKunde(kunde);
+    }
+
+    @Override
+    public List<Kunde> findAllByStringInNameOrEmail(String value) throws SQLException {
+        value = value.toUpperCase();
+        var sql = """
+                select kunden_id, email, name
+                from kunden
+                where UPPER(email) like ? or UPPER(name) like ?
+                """;
+        try (var statement = connection.prepareStatement(sql)) {
+            statement.setString(1, "%"+value+"%");
+            statement.setString(2, "%"+value+"%");
+            var resultSet = statement.executeQuery();
+            var kunden = new ArrayList<Kunde>();
+            while (resultSet.next()) {
+                kundeOfResultSet(resultSet).ifPresent(kunden::add);
+            }
+            return kunden;
+        }
     }
 
     @Override

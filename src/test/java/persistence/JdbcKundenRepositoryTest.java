@@ -108,4 +108,17 @@ class JdbcKundenRepositoryTest {
         var found = kundenRepository.findById(1).orElseThrow();
         assertEquals(kunde, found);
     }
+
+    @Test
+    void find_by_string() throws SQLException {
+        var kunden = List.of(
+                new Kunde(1, "Max", "test@email.com"),
+                new Kunde(2, "Maxi", "test1@email.com")
+        );
+        for (Kunde kunde : kunden) {
+            kundenRepository.save(kunde);
+        }
+        var result = kundenRepository.findAllByStringInNameOrEmail("Max");
+        assertEquals(kunden, result);
+    }
 }
