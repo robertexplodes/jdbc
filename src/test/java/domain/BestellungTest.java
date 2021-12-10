@@ -7,7 +7,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 class BestellungTest {
 
@@ -30,7 +31,7 @@ class BestellungTest {
     }
 
     @Test
-    void correct_compare_to_implementation() {
+    void correct_compareTo_implementation() {
         var bestellungen = new ArrayList<>(List.of(
                 new Bestellung(2, LocalDate.now(),
                         new Kunde(1, "Hansi", "Hansi@hinterseer.com"), null),

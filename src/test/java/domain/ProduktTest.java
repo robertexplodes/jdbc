@@ -2,6 +2,10 @@ package domain;
 
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class ProduktTest {
@@ -37,5 +41,15 @@ class ProduktTest {
         var produkt = new Produkt(1, Holzart.EICHE, "Tisch");
         var hp = produkt.holzartProperty();
         assertEquals("Eiche", hp.get());
+    }
+
+    @Test
+    void correct_compareTo() {
+        var produkte = new ArrayList<>(List.of(
+                new Produkt(2, Holzart.TANNE, "Esstisch"),
+                new Produkt(1, Holzart.EICHE, "Sessel")
+        ));
+        Collections.sort(produkte);
+        assertEquals(1, produkte.get(0).getId());
     }
 }
