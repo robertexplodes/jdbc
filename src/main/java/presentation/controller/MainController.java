@@ -40,16 +40,16 @@ public class MainController implements Initializable {
     private Button add;
 
     @FXML
-    private PersistableController mitarbeiterTabController;
+    protected PersistableController mitarbeiterTabController;
 
     @FXML
-    private PersistableSearchController produktTabController;
+    protected PersistableSearchController produktTabController;
 
     @FXML
-    private PersistableController kundenTabController;
+    protected PersistableController kundenTabController;
 
     @FXML
-    private PersistableSearchController bestellungTabController;
+    protected PersistableSearchController bestellungTabController;
 
     @FXML
     private TextField searchbar;
