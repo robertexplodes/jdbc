@@ -35,6 +35,9 @@ public class UpdateMitarbeiterController implements UpdateController<Mitarbeiter
 
     @Override
     public Optional<Mitarbeiter> getValue() {
+        if (namenskuerzel.getText().isEmpty() || name.getText().isEmpty() || gehalt.getText().isEmpty()) {
+            return Optional.empty();
+        }
         try {
             double newGehalt = Double.parseDouble(gehalt.getText());
             var m = new Mitarbeiter(namenskuerzel.getText(), name.getText(), rolle.getValue(), newGehalt);
@@ -42,13 +45,6 @@ public class UpdateMitarbeiterController implements UpdateController<Mitarbeiter
         } catch (NumberFormatException e) {
             return Optional.empty();
         }
-    }
-
-    private void showError() {
-        Alert a = new Alert(Alert.AlertType.ERROR);
-        a.setTitle("ERROR");
-        a.setHeaderText("Bitte alle Felder ausfüllen!");
-        a.showAndWait();
     }
 
     public void setEntity(Mitarbeiter m) {
@@ -63,12 +59,14 @@ public class UpdateMitarbeiterController implements UpdateController<Mitarbeiter
     public void setOnSave(Consumer<Mitarbeiter> onSave) {
         save.setOnAction(event -> {
             var value = getValue();
-            if (getValue().isPresent()) {
-                value.ifPresent(onSave);
-                Stage stage = (Stage) save.getScene().getWindow();
-                stage.close();
+            if (value.isPresent()) {
+                onSave.accept(value.get());
+                ((Stage) save.getScene().getWindow()).close();
             } else {
-                showError();
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Error");
+                alert.setHeaderText("Could not save Object");
+                alert.show();
             }
         });
     }
