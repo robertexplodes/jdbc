@@ -16,7 +16,7 @@ import utils.ConnectionManager;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-public class BestellungUpdateController implements Initializable, DetailController<Bestellung> {
+public class BestellungDetailController implements Initializable, DetailController<Bestellung> {
 
     @FXML
     private Label id;
